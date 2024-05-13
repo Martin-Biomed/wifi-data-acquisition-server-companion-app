@@ -1,4 +1,5 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Sat Feb 10 23:37:27 ACDT 2024
+#Sat Feb 24 18:06:08 ACDT 2024
 maven-artifact-2.0.6.pom>central=
+maven-artifact-2.0.6-sources.jar>central=
 maven-artifact-2.0.6.jar>central=

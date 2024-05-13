@@ -4,15 +4,15 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import Constants.Constants;
+
 public class MAC_OEM_Lookup {
-    /** Base URL for API. The API from www.macvendors.com is used for this project. */
-    private static final String baseURL = "https://api.macvendors.com/";
 
     // Java Functions require you to throw an exception when a possible error can be anticipated.
     public static String get_vendor_from_mac(String macAddress) throws IOException {
         try {
-            StringBuilder vendor = new StringBuilder();
             // We define the URL to send an HTTP GET Request
+            String baseURL = Constants.MAC_OEM_Lookup_baseURL;
             URL url = new URL(baseURL + macAddress);
             System.out.println("Sending HTTP Request to: " + baseURL + macAddress);
 
@@ -35,6 +35,7 @@ public class MAC_OEM_Lookup {
                 BufferedReader stream_reader = new BufferedReader(input_char_stream);
 
                 // We expect the vendor to be provided as multiple strings (from the API website).
+                StringBuilder vendor = new StringBuilder();
                 String vendor_line;
                 while ((vendor_line = stream_reader.readLine()) != null) {
                     vendor.append(vendor_line);
@@ -50,7 +51,6 @@ public class MAC_OEM_Lookup {
                 System.out.println("HTTP User Agent: " + userAgent);
                 return null;
             }
-
 
         } catch (IOException e){
             // This error can be thrown by a number of situations.
