@@ -1,18 +1,16 @@
-package outgoingApiCalls;
+package Utils;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
+import java.net.ServerSocket;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import Constants.Constants;
-
-// These functions will only work if the (BLE_GATT_Client_for_Windows.exe) app is run
-// and configured to enable the API server
-public class outgoingApiCalls {
-
-    // The API server topics (URL) are defined in the Constants file
+public class httpUtils {
 
     // Some chars are interpreted as "special" when pasted directly into a URL, so we encode input strings instead
     public static String return_url_encoded_str(String original_str) throws UnsupportedEncodingException {
@@ -30,6 +28,12 @@ public class outgoingApiCalls {
         try {
             // Opening the connection to the API URL (API server created by BLE_GATT_Client_for_Windows.exe)
             HttpURLConnection conn = (HttpURLConnection) selected_url.openConnection();
+
+            // This function only supports a sub-set of available HTTP request types
+            if (!RequestType.toUpperCase().matches("POST|PUT|GET|DELETE")){
+                return "Selected HTTP request type is not a valid option (POST/PUT/GET/DELETE)";
+            }
+
             conn.setRequestMethod(RequestType);
             conn.setInstanceFollowRedirects(true);
 
@@ -74,25 +78,12 @@ public class outgoingApiCalls {
         }
     }
 
-    public static String put_ble_device_name(String device_name) throws IOException {
-        try {
-            // We define the URL to send an HTTP GET Request
-            String baseURL = Constants.BLE_Client_baseURL;
-            String device_name_topic = Constants.device_name_topic;
-
-            String encoded_device_name = return_url_encoded_str(device_name);
-            URL url = new URL(baseURL + device_name_topic + encoded_device_name);
-            System.out.println("Sending HTTP Request to: " + baseURL + device_name_topic + encoded_device_name);
-
-            String response_str = generic_http_request(url, "PUT");
-            System.out.println("Response from HTTP Request: " + response_str);
-            return response_str;
-
+    // Find free unused TCP port.
+    public static int findFreePort() {
+        try (ServerSocket socket = new ServerSocket(0)) {
+            return socket.getLocalPort();
         } catch (IOException e) {
-            // This error can be thrown by a number of situations.
-            // Situations include, wrong input type provided as a string, or an inability to make external queries
-            System.out.println("Error Detected (put_ble_device_name): " + e.toString());
-            return e.toString();
+            return -1;
         }
     }
 }

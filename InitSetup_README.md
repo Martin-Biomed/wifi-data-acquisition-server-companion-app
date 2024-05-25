@@ -90,9 +90,11 @@ that corresponds to the object/function by using: [Alt] + [Enter]
 On the left-hand side of the IDE, you will normally find the Maven tab (if the project was opened as a MVN project).
 You can double-click on any of the build lifecycle stages to run that stage.
 
-### Using the Command Line
+#### Using the Command Line
 Ensure that your Java version running on the terminal is the same as what we set up in the IDE [OpenJDK version 1.8].
-
+On the command line:
+1. Navigate to the base location of the project repo (wifi_locator_app)
+2. Enter the following on the terminal: mvn --settings .\maven_repo\settings.xml -f pom.xml clean install
 
 
 ## Unit Testing
@@ -110,9 +112,19 @@ we select the "Project Files" view on the "Project" directory structure in the t
 
 To create a new set of tests for a Class:
 1. Navigate to the Java Class file containing the class to be tested
-2. Highlight the Class Name (Ex: outgoingApiCalls) 
-3. Right-click on the highlighted name, and select "Go To" -> "Test" -> "Create New Test"
+2. Highlight the Class Name (Ex: outgoingApiCaller) 
+3. Right-click on the highlighted name, and select "Go To" -> "Test" -> "Create New Test" [Ensure its got the correct format for JUnit 4]
 4. This will prompt the user to select the name of the test file and testing library to use
 5. Test files created this way will be stored in (wifi_locator_app/src/test/java)
+
+### Disabling Automatic Compilation of Unit Tests
+
+Test files can often create problems when using the "Run" command in IntelliJ, such as IntelliJ preventing you from 
+running a Java module because there are dependencies which are not detected in Unit Test Files (because they are only 
+scoped to be provided during testing in the POM). 
+
+Remove these files from compilation by: 
+1. Navigating to "File" -> "Settings"
+2. Navigate to "Build, Execution and Environment" -> Compiler -> Add the "src/test/java" folder
 
 
