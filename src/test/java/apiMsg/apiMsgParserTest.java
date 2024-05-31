@@ -30,7 +30,7 @@ public class apiMsgParserTest {
     @Test
     public void test_wifi_scan_response_success() throws UnsupportedEncodingException, customException {
 
-        int json_strings = 12;
+        int json_strings = 8;
         int num_of_keys = 4;
 
         StringBuilder combined_response_str = new StringBuilder(new String());
@@ -85,8 +85,7 @@ public class apiMsgParserTest {
 
         int json_strings = 4;
         int num_of_keys = 4;
-
-
+        
         // We create a JSONArray that will store the fake generated objects
         // The JSONArray format is incompatible with the (split_json_1d_str) function that is used when parsing Wi-Fi scan replies
         JSONArray simulated_json_obj_arr = new JSONArray();

@@ -61,9 +61,8 @@ public class stringUtils {
                 int arrayLength = split_string.length;
                 System.out.println("Array has " + arrayLength + " terms.");
 
-                System.out.println("The array has the following Sub-Strings:");
-
                 /*
+                System.out.println("The array has the following Sub-Strings:");
                 for (String s : split_string) {
                     System.out.println(s);
                 }

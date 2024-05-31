@@ -9,6 +9,7 @@ public class Constants {
     public static final String BLE_Client_hostname = "localhost";
     public static final Integer BLE_Client_port = 5900;
 
+    /** These topics cover all supported options from the (BLE_GATT_Client_for_Windows.exe) application. */
     /** Topics are appended at the end of the Base URL (depending on the value being updated through the API) */
     public static final String device_name_topic = "/device/name/";
     public static final String device_addr_topic = "/device/address/";

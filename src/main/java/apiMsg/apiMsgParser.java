@@ -26,13 +26,25 @@ public class apiMsgParser {
         System.out.println("The array has the following JSON Objects:");
         for (int i = 0; i < arrayLength; i++) {
             JSONObject jsonObject = stringUtils.convert_string_to_json_obj(split_string[i]);
-            System.out.println(split_string[i]);
+            //System.out.println(split_string[i]);
             //System.out.println("Extracting the available keys for this JSON object... ");
             //ArrayList<String> jsonObject_keys = stringUtils.return_available_json_keys(jsonObject);
             json_obj_arr[i] = jsonObject;
             System.out.println("Adding new item to JSON Object Array: " + json_obj_arr[i]);
         }
         return json_obj_arr;
+    }
+
+    // The reply to a Wi-Fi connection should always be a single 1D JSON String, parsing is just converting to a JSON Object
+    public static JSONObject parse_wifi_connect_response(String input_str){
+        JSONObject jsonObject = stringUtils.convert_string_to_json_obj(input_str);
+        return jsonObject;
+    }
+
+    // The reply to a ping should always be a single 1D JSON String, parsing is just converting to a JSON Object
+    public static JSONObject parse_ping_response(String input_str){
+        JSONObject jsonObject = stringUtils.convert_string_to_json_obj(input_str);
+        return jsonObject;
     }
 
 }

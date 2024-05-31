@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Cursor?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.effect.Glow?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="968.0" xmlns="http://javafx.com/javafx/8.0.311" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Gui.Controller">
+  <children>
+    <MenuBar fx:id="main_app_menubar" VBox.vgrow="NEVER">
+      <menus>
+        <Menu mnemonicParsing="false" text="Help">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Pinging Hosts on a Network" />
+                  <MenuItem mnemonicParsing="false" text="About This App" />
+                  <MenuItem mnemonicParsing="false" text="Scanning Wi-Fi APs" />
+                  <MenuItem mnemonicParsing="false" text="Connecting ESP32 to Wi-Fi AP" />
+               </items>
+        </Menu>
+            <Menu mnemonicParsing="false" text="Reset">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Reset All" />
+              </items>
+            </Menu>
+      </menus>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+    </MenuBar>
+    <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+      <items>
+        <AnchorPane maxHeight="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="551.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
+          <children>
+            <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="User Options" textAlignment="CENTER" wrapText="false">
+              <font>
+                <Font size="18.0" fx:id="x1" />
+              </font>
+              <textFill>
+                <Color blue="0.624" green="0.624" red="0.624" fx:id="x2" />
+              </textFill>
+            </Label>
+                  <Button fx:id="wifi_scan_option_button" layoutX="4.0" layoutY="84.0" mnemonicParsing="false" onMouseClicked="#click_scan_wifi_ap_button" prefHeight="25.0" prefWidth="192.0" text="Scan Wi-Fi APs">
+                     <padding>
+                        <Insets left="20.0" right="20.0" />
+                     </padding></Button>
+                  <Button fx:id="wifi_conn_execute_button" layoutX="4.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Connect to a Wi-Fi AP" />
+                  <Button fx:id="ping_host_button" layoutX="4.0" layoutY="152.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Ping a Host" />
+                  <Button fx:id="configure_ble_conn_button" layoutX="4.0" layoutY="51.0" mnemonicParsing="false" onMouseClicked="#click_configure_ble_button" prefHeight="25.0" prefWidth="192.0" text="Configure BLE Connection" AnchorPane.leftAnchor="4.0">
+                     <cursor>
+                        <Cursor fx:constant="DEFAULT" />
+                     </cursor>
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <padding>
+                        <Insets left="20.0" right="20.0" />
+                     </padding>
+                  </Button>
+          </children>
+        </AnchorPane>
+        <ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="551.0" prefWidth="184.0">
+          <content>
+            <AnchorPane id="Content" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="545.0" prefWidth="184.0">
+              <children>
+                <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" textFill="$x2" wrapText="false" />
+              </children>
+            </AnchorPane>
+          </content>
+        </ScrollPane>
+        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="551.0" prefWidth="300.0">
+          <children>
+                  <TabPane fx:id="main_tab_pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+                    <tabs>
+                      <Tab fx:id="ble_conn_tab" text="BLE Connection Details">
+                           <content>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <TextArea fx:id="device_name_text_field" layoutX="24.0" layoutY="40.0" prefHeight="37.0" prefWidth="496.0" promptText="If Selected, MAC Address Not Needed" />
+                                    <Label fx:id="device_name_label" layoutX="24.0" layoutY="21.0" text="ESP32 Device Name">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="device_addr_label" layoutX="24.0" layoutY="89.0" text="ESP32 Device MAC Address">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <TextArea fx:id="device_addr_text_field" layoutX="24.0" layoutY="108.0" prefHeight="38.0" prefWidth="496.0" promptText="If Selected, Device Name Not Needed (Expects Text in Format aa:bb:cc:dd:ee:ff)" />
+                                    <Label fx:id="device_ble_gatt_read_label" layoutX="24.0" layoutY="164.0" text="ESP32 Device BLE GATT Read UUID">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <TextArea fx:id="device_ble_gatt_read_text_field" layoutX="24.0" layoutY="183.0" prefHeight="38.0" prefWidth="496.0" promptText="Expects Text in the following format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+                                    <Label fx:id="device_ble_gatt_write_label" layoutX="24.0" layoutY="242.0" text="ESP32 Device BLE GATT Write UUID">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <TextArea fx:id="device_ble_gatt_write_text_field" layoutX="24.0" layoutY="261.0" prefHeight="38.0" prefWidth="496.0" promptText="Expects Text in the following format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
+                                    <Label fx:id="esp32_ble_conn_status_label" layoutX="24.0" layoutY="321.0" text="ESP32 Device Successful Connection Status">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <Label fx:id="esp32_ble_status_minor_label" layoutX="24.0" layoutY="340.0" text="Verification requires a command to be sent to the ESP32">
+                                       <font>
+                                          <Font size="11.0" />
+                                       </font>
+                                    </Label>
+                                    <Circle fx:id="esp32_conn_status_circle" fill="#a9bdd0" layoutX="318.0" layoutY="340.0" radius="12.0" stroke="BLACK" strokeType="INSIDE">
+                                       <effect>
+                                          <Glow />
+                                       </effect></Circle>
+                                    <Text fx:id="ble_conn_confirmation_label" layoutX="27.0" layoutY="386.0" strokeWidth="0.0" text="BLE Parameter Values Not Yet Added" wrappingWidth="513.1484375">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Text>
+                                 </children></AnchorPane>
+                           </content>
+                      </Tab>
+                        <Tab fx:id="wifi_scan_tab" text="Scanned Wi-Fi APs">
+                           <content>
+                              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <Accordion fx:id="wifi_scan_accordion" prefHeight="76.0" prefWidth="569.0">
+                                      <panes>
+                                        <TitledPane fx:id="scanned_ap_titledpane_1" animated="false" text="Wi-Fi AP Not Found">
+                                          <content>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                          </content>
+                                        </TitledPane>
+                                        <TitledPane fx:id="scanned_ap_titledpane_2" animated="false" prefHeight="26.0" prefWidth="556.0" text="Wi-Fi AP Not Found">
+                                          <content>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                          </content>
+                                        </TitledPane>
+                                        <TitledPane fx:id="scanned_ap_titledpane_3" animated="false" text="Wi-Fi AP Not Found">
+                                          <content>
+                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                          </content>
+                                        </TitledPane>
+                                          <TitledPane fx:id="scanned_ap_titledpane_4" animated="false" text="Wi-Fi AP Not Found">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            </content>
+                                          </TitledPane>
+                                          <TitledPane fx:id="scanned_ap_titledpane_5" animated="false" text="Wi-Fi AP Not Found">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            </content>
+                                          </TitledPane>
+                                          <TitledPane fx:id="scanned_ap_titledpane_6" animated="false" text="Wi-Fi AP Not Found">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            </content>
+                                          </TitledPane>
+                                          <TitledPane fx:id="scanned_ap_titledpane_7" animated="false" text="Wi-Fi AP Not Found">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            </content>
+                                          </TitledPane>
+                                          <TitledPane fx:id="scanned_ap_titledpane_8" animated="false" text="Wi-Fi AP Not Found">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            </content>
+                                          </TitledPane>
+                                          <TitledPane fx:id="scanned_ap_titledpane_9" animated="false" text="Wi-Fi AP Not Found">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            </content>
+                                          </TitledPane>
+                                          <TitledPane fx:id="scanned_ap_titledpane_10" animated="false" text="Wi-Fi AP Not Found">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            </content>
+                                          </TitledPane>
+                                          <TitledPane fx:id="scanned_ap_titledpane_11" animated="false" text="Wi-Fi AP Not Found">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            </content>
+                                          </TitledPane>
+                                          <TitledPane fx:id="scanned_ap_titledpane_12" animated="false" text="Wi-Fi AP Not Found">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            </content>
+                                          </TitledPane>
+                                          <TitledPane fx:id="scanned_ap_titledpane_13" animated="false" text="Wi-Fi AP Not Found">
+                                            <content>
+                                              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            </content>
+                                          </TitledPane>
+                                      </panes>
+                                       <padding>
+                                          <Insets left="10.0" right="10.0" top="10.0" />
+                                       </padding>
+                                    </Accordion>
+                                 </children></AnchorPane>
+                           </content>
+                        </Tab>
+                      <Tab fx:id="wifi_conn_tab" text="Wi-Fi AP Connection Details">
+                           <content>
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+                           </content>
+                      </Tab>
+                        <Tab fx:id="ping_details_tab" text="Ping Details">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="522.0" prefWidth="568.0" />
+                          </content>
+                        </Tab>
+                    </tabs>
+                  </TabPane>
+          </children>
+        </AnchorPane>
+      </items>
+    </SplitPane>
+    <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+      <children>
+        <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" prefHeight="16.0" prefWidth="185.0" text="ESP32 Wi-Fi AP Connection Status" HBox.hgrow="ALWAYS">
+          <font>
+            <Font name="System Bold" size="11.0" fx:id="x3" />
+          </font>
+          <textFill>
+            <Color blue="0.625" green="0.625" red="0.625" fx:id="x4" />
+          </textFill>
+        </Label>
+        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
+               <children>
+                  <Circle fill="#ff411f" layoutX="1.0" layoutY="7.0" opacity="0.9" radius="5.0" stroke="#797777" strokeType="INSIDE" />
+               </children></Pane>
+        <Label font="$x3" maxWidth="-1.0" prefHeight="16.0" prefWidth="135.0" textFill="$x4" HBox.hgrow="NEVER" />
+      </children>
+      <padding>
+        <Insets bottom="3.0" left="3.0" right="3.0" top="3.0" />
+      </padding>
+    </HBox>
+  </children>
+</VBox>
