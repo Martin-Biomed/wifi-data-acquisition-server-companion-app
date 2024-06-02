@@ -46,7 +46,7 @@
             <Insets />
          </VBox.margin>
     </MenuBar>
-    <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" minHeight="-Infinity" minWidth="-Infinity" prefHeight="553.0" prefWidth="970.0" VBox.vgrow="ALWAYS">
       <items>
         <AnchorPane maxHeight="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="551.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
           <children>
@@ -75,6 +75,21 @@
                         <Insets left="20.0" right="20.0" />
                      </padding>
                   </Button>
+                  <Label fx:id="desktop_wifi_status_label" layoutX="33.0" layoutY="422.0" prefHeight="40.0" prefWidth="135.0" text="Desktop Wi-Fi Connection Status" textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Circle fx:id="desktop_wifi_statuc_circle" fill="#ccd0d3" layoutX="100.0" layoutY="479.0" radius="10.0" stroke="BLACK" strokeType="INSIDE">
+                     <effect>
+                        <Glow />
+                     </effect>
+                  </Circle>
+                  <Text fx:id="desktop_wifi_status_text" layoutX="34.0" layoutY="511.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Desktop Not Connected to the Internet" textAlignment="CENTER" wrappingWidth="134.99998927116394">
+                     <font>
+                        <Font size="11.0" />
+                     </font>
+                  </Text>
           </children>
         </AnchorPane>
         <ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="551.0" prefWidth="184.0">
@@ -118,7 +133,7 @@
                                        </font>
                                     </Label>
                                     <TextArea fx:id="device_ble_gatt_write_text_field" layoutX="24.0" layoutY="261.0" prefHeight="38.0" prefWidth="496.0" promptText="Expects Text in the following format: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" />
-                                    <Label fx:id="esp32_ble_conn_status_label" layoutX="24.0" layoutY="321.0" text="ESP32 Device Successful Connection Status">
+                                    <Label fx:id="esp32_ble_conn_status_label" layoutX="24.0" layoutY="321.0" prefHeight="19.0" prefWidth="334.0" text="ESP32 Device Successful BLE GATT Connection Status">
                                        <font>
                                           <Font name="System Bold" size="13.0" />
                                        </font>
@@ -128,11 +143,11 @@
                                           <Font size="11.0" />
                                        </font>
                                     </Label>
-                                    <Circle fx:id="esp32_conn_status_circle" fill="#a9bdd0" layoutX="318.0" layoutY="340.0" radius="12.0" stroke="BLACK" strokeType="INSIDE">
+                                    <Circle fx:id="esp32_conn_status_circle" fill="#a9bdd0" layoutX="370.0" layoutY="334.0" radius="12.0" stroke="BLACK" strokeType="INSIDE">
                                        <effect>
                                           <Glow />
                                        </effect></Circle>
-                                    <Text fx:id="ble_conn_confirmation_label" layoutX="27.0" layoutY="386.0" strokeWidth="0.0" text="BLE Parameter Values Not Yet Added" wrappingWidth="513.1484375">
+                                    <Text fx:id="ble_conn_confirmation_label" layoutX="25.0" layoutY="386.0" strokeWidth="0.0" text="BLE Parameter Values Not Yet Added" wrappingWidth="513.1484375">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>
@@ -146,17 +161,17 @@
                                  <children>
                                     <Accordion fx:id="wifi_scan_accordion" prefHeight="76.0" prefWidth="569.0">
                                       <panes>
-                                        <TitledPane fx:id="scanned_ap_titledpane_1" animated="false" text="Wi-Fi AP Not Found">
+                                        <TitledPane fx:id="scanned_ap_titledpane_1" alignment="BOTTOM_LEFT" animated="false" centerShape="false" text="Wi-Fi AP Not Found">
                                           <content>
-                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            <AnchorPane centerShape="false" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                                           </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="scanned_ap_titledpane_2" animated="false" prefHeight="26.0" prefWidth="556.0" text="Wi-Fi AP Not Found">
+                                        <TitledPane fx:id="scanned_ap_titledpane_2" animated="false" centerShape="false" prefHeight="26.0" prefWidth="556.0" text="Wi-Fi AP Not Found">
                                           <content>
-                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                                            <AnchorPane centerShape="false" minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                                           </content>
                                         </TitledPane>
-                                        <TitledPane fx:id="scanned_ap_titledpane_3" animated="false" text="Wi-Fi AP Not Found">
+                                        <TitledPane fx:id="scanned_ap_titledpane_3" animated="false" centerShape="false" text="Wi-Fi AP Not Found">
                                           <content>
                                             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                                           </content>
@@ -235,9 +250,9 @@
         </AnchorPane>
       </items>
     </SplitPane>
-    <HBox id="HBox" alignment="CENTER_LEFT" spacing="5.0" VBox.vgrow="NEVER">
+    <HBox id="HBox" alignment="CENTER_LEFT" minHeight="-Infinity" minWidth="-Infinity" prefWidth="968.0" spacing="5.0">
       <children>
-        <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" prefHeight="16.0" prefWidth="185.0" text="ESP32 Wi-Fi AP Connection Status" HBox.hgrow="ALWAYS">
+        <Label maxHeight="1.7976931348623157E308" maxWidth="-1.0" minHeight="-Infinity" prefHeight="16.0" prefWidth="185.0" text="ESP32 Wi-Fi AP Connection Status" HBox.hgrow="ALWAYS">
           <font>
             <Font name="System Bold" size="11.0" fx:id="x3" />
           </font>
@@ -245,7 +260,7 @@
             <Color blue="0.625" green="0.625" red="0.625" fx:id="x4" />
           </textFill>
         </Label>
-        <Pane prefHeight="-1.0" prefWidth="-1.0" HBox.hgrow="ALWAYS">
+        <Pane minHeight="-Infinity" minWidth="-Infinity" prefHeight="15.0" prefWidth="632.0" HBox.hgrow="ALWAYS">
                <children>
                   <Circle fill="#ff411f" layoutX="1.0" layoutY="7.0" opacity="0.9" radius="5.0" stroke="#797777" strokeType="INSIDE" />
                </children></Pane>

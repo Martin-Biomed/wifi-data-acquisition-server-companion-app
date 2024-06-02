@@ -61,7 +61,7 @@ public class httpUtilsTest {
         String encoded_str =  httpUtils.return_url_encoded_str(random_string);
         URL selected_url = new URL(
                 "http://" + Constants.BLE_Client_hostname + ":" + free_port + Constants.device_name_topic + encoded_str);
-        System.out.println("Generated URL: " + encoded_str);
+        System.out.println("Generated URL: " + selected_url.toString());
 
         // The response string we receive from the remote API server should be simply forwarded via this function
         WireMock.stubFor(WireMock.get(WireMock.urlEqualTo(Constants.device_name_topic + encoded_str))
@@ -78,7 +78,7 @@ public class httpUtilsTest {
         System.out.println("Received response: " + response);
 
         Assert.assertThat(response, is(notNullValue()));
-        Assert.assertTrue(response.contains("405"));
+        Assert.assertTrue(response.contains("The method is not allowed for the selected URL."));
 
     }
 

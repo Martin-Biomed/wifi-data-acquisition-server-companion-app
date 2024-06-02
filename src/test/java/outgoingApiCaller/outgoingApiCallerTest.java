@@ -89,7 +89,7 @@ public class outgoingApiCallerTest {
         System.out.println("Received response: " + response);
 
         Assert.assertThat(response, is(notNullValue()));
-        Assert.assertTrue(response.contains("Failed to connect to HTTP endpoint (Error Code: 404)"));
+        Assert.assertTrue(response.contains("The requested URL was not found on the server."));
     }
 
     @Test
@@ -191,7 +191,7 @@ public class outgoingApiCallerTest {
         System.out.println("Received response: " + response);
 
         Assert.assertThat(response, is(notNullValue()));
-        Assert.assertTrue(response.contains("Failed to connect to HTTP endpoint (Error Code: 404)"));
+        Assert.assertTrue(response.contains("The requested URL was not found on the server."));
     }
 
     @Test
@@ -266,7 +266,7 @@ public class outgoingApiCallerTest {
         System.out.println("Received response: " + response);
 
         Assert.assertThat(response, is(notNullValue()));
-        Assert.assertTrue(response.contains("Failed to connect to HTTP endpoint (Error Code: 404)"));
+        Assert.assertTrue(response.contains("The requested URL was not found on the server."));
     }
 
     @Test
@@ -342,7 +342,7 @@ public class outgoingApiCallerTest {
         System.out.println("Received response: " + response);
 
         Assert.assertThat(response, is(notNullValue()));
-        Assert.assertTrue(response.contains("Failed to connect to HTTP endpoint (Error Code: 404)"));
+        Assert.assertTrue(response.contains("The requested URL was not found on the server."));
     }
 
     @Test

@@ -1,5 +1,6 @@
 package Gui;
 
+import customExceptions.customException;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 
@@ -10,6 +11,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 
+import javafx.scene.text.TextAlignment;
 import org.json.JSONObject;
 import outgoingApiCaller.outgoingApiCaller;
 import outgoingApiCaller.bleConnection;
@@ -19,6 +21,7 @@ import Utils.stringUtils;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 
 // This file contains all the EventHandlers for the JavaFx Application
 public class Controller {
@@ -33,24 +36,19 @@ public class Controller {
 
     // These are objects available in the "BLE Connection Details" Tab
     @FXML
-    private TextArea device_name_text_field;
-    @FXML
-    private TextArea device_addr_text_field;
-    @FXML
-    private TextArea device_ble_gatt_read_text_field;
-    @FXML
-    private TextArea device_ble_gatt_write_text_field;
+    private TextArea device_name_text_field, device_addr_text_field, device_ble_gatt_read_text_field, device_ble_gatt_write_text_field;
     @FXML
     private Text ble_conn_confirmation_label;
     @FXML
     private Tab ble_conn_tab;
-
     @FXML
     private Circle esp32_conn_status_circle;
 
     // These are objects available in the "Scanned Wi-Fi APs" Tab
     @FXML
     private Accordion wifi_scan_accordion;
+    @FXML
+    private Tab wifi_scan_tab;
 
     // We only ever use one instance of a bleConnection
     public static bleConnection applicationBleConnection;
@@ -104,7 +102,7 @@ public class Controller {
         main_tab_pane.getSelectionModel().select(ble_conn_tab);
     }
 
-    public void click_scan_wifi_ap_button(MouseEvent mouseEvent) throws IOException {
+    public void click_scan_wifi_ap_button(MouseEvent mouseEvent) throws IOException, customException {
 
         int result = applicationWifiScan.execute_wifi_scan(applicationBleConnection);
 
@@ -113,6 +111,8 @@ public class Controller {
             esp32_conn_status_circle.setFill(Color.rgb(150, 10, 10));
             ble_conn_confirmation_label.setText("Error Detected: [" + applicationWifiScan.get_reply_str() + "]");
             System.out.println("Error Detected: [" + applicationWifiScan.get_reply_str() + "]");
+            // This step ensures that we switch to the BLE Connection Tab which shows the error message from the API call
+            main_tab_pane.getSelectionModel().select(ble_conn_tab);
         }
         else {
             // These error messages are displayed in the "BLE Connection Details" Tab
@@ -120,6 +120,7 @@ public class Controller {
             ble_conn_confirmation_label.setText("Successful ESP32 Connection");
 
             // This is the processing required to properly display the JSON data
+            //String formatted_wifi_scan_str = wifiScan.format_json_str(applicationWifiScan.get_reply_str());
             String[] array_of_json_aps = stringUtils.split_json_1d_str(applicationWifiScan.get_reply_str());
 
             ObservableList<TitledPane> children = wifi_scan_accordion.getPanes();
@@ -130,13 +131,29 @@ public class Controller {
                 if (!stringUtils.check_valid_json_str(array_of_json_aps[i])){
                     children.get(i).setContent(new Text("Error converting String to JSON Object"));
                 }
-                JSONObject json_ap = stringUtils.convert_string_to_json_obj(array_of_json_aps[i]);
-                children.get(i).setText(json_ap.get("ssid").toString());
+                String formatted_wifi_scan_str = wifiScan.format_json_str(array_of_json_aps[i]);
+                JSONObject json_ap = stringUtils.convert_string_to_json_obj(formatted_wifi_scan_str);
+                children.get(i).setText(json_ap.get("SSID").toString());
 
-                children.get(i).setContent(new Text(array_of_json_aps[i]));
+                // We will automatically iterate over every available key in the JSON file
+                ArrayList<String> available_json_keys =  stringUtils.return_available_json_keys(json_ap);
+
+                StringBuilder formatted_ap_str = new StringBuilder();
+                //final Text content = new Text();
+
+                // We construct a formatted version of the JSON String
+                for (String key : available_json_keys){
+                    // We print out every key-value pair as a separate "Text" object in the current TitledPane
+                    //children.get(i).setContent(new Text(key + ": " + json_ap.get(key).toString()));
+                    formatted_ap_str.append(key).append(": ").append(json_ap.get(key).toString()).append("\n");
+                }
+                // We add the final string as a singular "Text" object
+                final Text content = new Text(formatted_ap_str.toString());
+                content.setTextAlignment(TextAlignment.LEFT);
+                children.get(i).setContent(content);
             }
-
-
+            // This step ensures that we switch to the correct Tab in case of a successful Wi-Fi scan
+            main_tab_pane.getSelectionModel().select(wifi_scan_tab);
         }
 
 

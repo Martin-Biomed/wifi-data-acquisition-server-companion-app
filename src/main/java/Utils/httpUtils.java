@@ -12,6 +12,10 @@ import java.nio.charset.StandardCharsets;
 
 public class httpUtils {
 
+    // We make this a separate static variable such that the value is not lost if it fails the try-catch condition
+    private static String raw_reply_content;
+    private static int response_code;
+
     // Some chars are interpreted as "special" when pasted directly into a URL, so we encode input strings instead
     public static String return_url_encoded_str(String original_str) throws UnsupportedEncodingException {
         try {
@@ -38,12 +42,11 @@ public class httpUtils {
             conn.setInstanceFollowRedirects(true);
 
             // Check if connection was successful
-            int responseCode = conn.getResponseCode();
+            response_code = conn.getResponseCode();
             String contentType = conn.getHeaderField("Content-Type");
             String userAgent = conn.getRequestProperty("User-Agent");
 
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-
+            if (response_code < 300) {
                 // Sets up a char input stream from the raw byte stream received from the API call.
                 InputStreamReader input_char_stream = new InputStreamReader(conn.getInputStream());
 
@@ -57,23 +60,35 @@ public class httpUtils {
                     response_str_builder.append(response_line);
                 }
                 stream_reader.close();
-
                 // We convert the StringBuilder object to a String and return it
-                return (response_str_builder.toString());
+                raw_reply_content = response_str_builder.toString();
+                return raw_reply_content;
             }
-            // If the HTTP request has failed, then we return a null string
+            // If the HTTP request has failed, then we return the "failure" message string defined in the
+            // (BLE_GATT_Client_for_Windows.exe) application
             else {
-                System.out.println("HTTP Request Failed with Code: " + responseCode);
+                System.out.println("HTTP Request Failed with Code: " + response_code);
                 System.out.println("HTTP Content Type: " + contentType);
                 System.out.println("HTTP User Agent: " + userAgent);
-                String request_error = "Failed to connect to HTTP endpoint (Error Code: " + responseCode + ")";
-                return request_error;
+                // Sets up a char input stream from the raw byte stream (specifically Error Byte Stream) received from the API call.
+                BufferedReader stream_reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+
+                // We configure a generic approach to receive (potentially) multiple strings from the API server
+                String response_line;
+                StringBuilder response_str_builder = new StringBuilder();
+                while ((response_line = stream_reader.readLine()) != null) {
+                    response_str_builder.append(response_line);
+                }
+                raw_reply_content = response_str_builder.toString();
+                return raw_reply_content;
             }
 
         } catch (IOException e) {
-            // This error can be thrown by a number of situations.
+            // This error can be thrown by a number of situations (handled entirely by the Java app).
             // Situations include, wrong input type provided as macAddress, or an inability to make external queries
             System.out.println("Error Detected (generic_http_request): " + e.toString());
+            //String error_str = raw_reply_content + " (Error Code: " + response_code + ")";
+            System.out.println("Returning Error Message: " + e.toString());
             return e.toString();
         }
     }
