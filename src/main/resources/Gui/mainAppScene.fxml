@@ -24,7 +24,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="968.0" xmlns="http://javafx.com/javafx/8.0.311" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Gui.Controller">
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="659.0" prefWidth="968.0" xmlns="http://javafx.com/javafx/8.0.311" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Gui.Controller">
   <children>
     <MenuBar fx:id="main_app_menubar" VBox.vgrow="NEVER">
       <menus>
@@ -75,19 +75,19 @@
                         <Insets left="20.0" right="20.0" />
                      </padding>
                   </Button>
-                  <Label fx:id="desktop_wifi_status_label" layoutX="33.0" layoutY="422.0" prefHeight="40.0" prefWidth="135.0" text="Desktop Wi-Fi Connection Status" textAlignment="CENTER" wrapText="true">
+                  <Label fx:id="desktop_wifi_status_label" layoutX="33.0" layoutY="422.0" prefHeight="40.0" prefWidth="135.0" text="Desktop Internet Connection Status" textAlignment="CENTER" wrapText="true">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <Circle fx:id="desktop_wifi_statuc_circle" fill="#ccd0d3" layoutX="100.0" layoutY="479.0" radius="10.0" stroke="BLACK" strokeType="INSIDE">
+                  <Circle fx:id="desktop_wifi_status_circle" fill="#ccd0d3" layoutX="100.0" layoutY="479.0" radius="10.0" stroke="BLACK" strokeType="INSIDE">
                      <effect>
                         <Glow />
                      </effect>
                   </Circle>
-                  <Text fx:id="desktop_wifi_status_text" layoutX="34.0" layoutY="511.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Desktop Not Connected to the Internet" textAlignment="CENTER" wrappingWidth="134.99998927116394">
+                  <Text fx:id="desktop_wifi_status_text" layoutX="41.0" layoutY="506.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Desktop Not Connected to the Internet" textAlignment="CENTER" wrappingWidth="117.0000119805336">
                      <font>
-                        <Font size="11.0" />
+                        <Font size="10.0" />
                      </font>
                   </Text>
           </children>
@@ -157,7 +157,7 @@
                       </Tab>
                         <Tab fx:id="wifi_scan_tab" text="Scanned Wi-Fi APs">
                            <content>
-                              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="200.0" prefWidth="200.0">
+                              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="584.0" prefWidth="568.0">
                                  <children>
                                     <Accordion fx:id="wifi_scan_accordion" prefHeight="76.0" prefWidth="569.0">
                                       <panes>
@@ -231,6 +231,7 @@
                                           <Insets left="10.0" right="10.0" top="10.0" />
                                        </padding>
                                     </Accordion>
+                                    <Button fx:id="wifi_router_oem_button" layoutX="14.0" layoutY="522.0" mnemonicParsing="false" onMouseClicked="#click_wifi_ap_oem_button" prefHeight="48.0" prefWidth="239.0" text="Attempt to Find Wi-Fi Router OEMs (Requires Desktop Internet Connection)" textAlignment="CENTER" wrapText="true" />
                                  </children></AnchorPane>
                            </content>
                         </Tab>

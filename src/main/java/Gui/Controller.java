@@ -12,12 +12,13 @@ import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 import org.json.JSONObject;
 import outgoingApiCaller.outgoingApiCaller;
 import outgoingApiCaller.bleConnection;
-import outgoingApiCaller.bleConnection.*;
 import outgoingApiCaller.wifiScan;
 import Utils.stringUtils;
+import Gui.checkDesktopInternetConnectionService;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -50,19 +51,58 @@ public class Controller {
     @FXML
     private Tab wifi_scan_tab;
 
-    // We only ever use one instance of a bleConnection
-    public static bleConnection applicationBleConnection;
+    // These Objects are related to showing the Internet Connection Status of the Desktop
+    @FXML
+    private Circle desktop_wifi_status_circle;
+    @FXML
+    private Text desktop_wifi_status_text;
 
+    // These are the different buttons that are available in the GUI
+    @FXML
+    private Button wifi_scan_option_button;
+    @FXML
+    private Button wifi_conn_execute_button;
+    @FXML
+    private Button ping_host_button;
+    @FXML
+    private Button wifi_router_oem_button;
+
+    // Object Instances that are only ever initialised once in the lifecycle of the JAR application
+    public static bleConnection applicationBleConnection;
     public static wifiScan applicationWifiScan;
+    public static checkDesktopInternetConnectionService internetConnectionMonitorService;
+
+    // This variable is used when determining whether we can lookup Wi-Fi AP manufacturers (only if a scan has occurred)
+    private static boolean scanned_wifi_aps_available = false;
+    private static String[] latest_set_of_scanned_wifi_aps;
 
     // This is a special function for the JavaFx Controller class that always executes at the start of the app
     public void initialize(){
         applicationBleConnection = new bleConnection();
         applicationWifiScan = new wifiScan();
+
+        // Start the JavaFx task for monitoring Internet Connectivity
+        internetConnectionMonitorService = new checkDesktopInternetConnectionService(
+                desktop_wifi_status_circle, desktop_wifi_status_text);
+
+        internetConnectionMonitorService.setPeriod(Duration.seconds(3));
+        internetConnectionMonitorService.start();
+
+        // We disable some buttons that have to be enabled by specific conditions
+        wifi_scan_option_button.setDisable(true);
+        wifi_conn_execute_button.setDisable(true);
+        ping_host_button.setDisable(true);
+        wifi_router_oem_button.setDisable(true);
+
     }
 
     // We set the BLE Connection static variables in our instance of bleConnection (shared between all BLE functions)
     public void click_configure_ble_button(MouseEvent mouseEvent) {
+
+        // We always start by disabling all dependent Buttons in case we fail to configure the ESP32 BLE GATT conenction
+        wifi_scan_option_button.setDisable(true);
+        wifi_conn_execute_button.setDisable(true);
+        ping_host_button.setDisable(true);
 
         // We only send the value if not empty to avoid Null Pointer Exception for a JavaFx Text Field
         applicationBleConnection.set_ble_device_name(device_name_text_field.getText());
@@ -96,6 +136,10 @@ public class Controller {
             default:
                 System.out.println("BLE Connection Parameters Successfully Updated.");
                 ble_conn_confirmation_label.setText("BLE Connection Parameters Successfully Updated.");
+                // We re-enable the Buttons which are dependent on successfully setting up the BLE Connection first
+                wifi_scan_option_button.setDisable(false);
+                wifi_conn_execute_button.setDisable(false);
+                ping_host_button.setDisable(false);
         }
 
         // This step ensures that we switch to the correct Tab everytime the button is clicked.
@@ -108,7 +152,7 @@ public class Controller {
 
         if (result != 0){
             // These error messages are displayed in the "BLE Connection Details" Tab
-            esp32_conn_status_circle.setFill(Color.rgb(150, 10, 10));
+            esp32_conn_status_circle.setFill(Color.rgb(180, 10, 10));
             ble_conn_confirmation_label.setText("Error Detected: [" + applicationWifiScan.get_reply_str() + "]");
             System.out.println("Error Detected: [" + applicationWifiScan.get_reply_str() + "]");
             // This step ensures that we switch to the BLE Connection Tab which shows the error message from the API call
@@ -116,19 +160,22 @@ public class Controller {
         }
         else {
             // These error messages are displayed in the "BLE Connection Details" Tab
-            esp32_conn_status_circle.setFill(Color.rgb(10, 120, 10));
+            esp32_conn_status_circle.setFill(Color.rgb(10, 150, 10));
             ble_conn_confirmation_label.setText("Successful ESP32 Connection");
 
             // This is the processing required to properly display the JSON data
             //String formatted_wifi_scan_str = wifiScan.format_json_str(applicationWifiScan.get_reply_str());
             String[] array_of_json_aps = stringUtils.split_json_1d_str(applicationWifiScan.get_reply_str());
 
+            latest_set_of_scanned_wifi_aps = array_of_json_aps;
+
+            // Every Pane in the "accordion" is a child that will be populated with Text
             ObservableList<TitledPane> children = wifi_scan_accordion.getPanes();
 
-            for (int i = 0; i<array_of_json_aps.length; i++){
+            for (int i = 0; i < array_of_json_aps.length; i++) {
 
                 // We use the JSON properties of the string to extract the SSID of the AP [added as Text]
-                if (!stringUtils.check_valid_json_str(array_of_json_aps[i])){
+                if (!stringUtils.check_valid_json_str(array_of_json_aps[i])) {
                     children.get(i).setContent(new Text("Error converting String to JSON Object"));
                 }
                 String formatted_wifi_scan_str = wifiScan.format_json_str(array_of_json_aps[i]);
@@ -136,15 +183,13 @@ public class Controller {
                 children.get(i).setText(json_ap.get("SSID").toString());
 
                 // We will automatically iterate over every available key in the JSON file
-                ArrayList<String> available_json_keys =  stringUtils.return_available_json_keys(json_ap);
+                ArrayList<String> available_json_keys = stringUtils.return_available_json_keys(json_ap);
 
                 StringBuilder formatted_ap_str = new StringBuilder();
-                //final Text content = new Text();
 
                 // We construct a formatted version of the JSON String
-                for (String key : available_json_keys){
+                for (String key : available_json_keys) {
                     // We print out every key-value pair as a separate "Text" object in the current TitledPane
-                    //children.get(i).setContent(new Text(key + ": " + json_ap.get(key).toString()));
                     formatted_ap_str.append(key).append(": ").append(json_ap.get(key).toString()).append("\n");
                 }
                 // We add the final string as a singular "Text" object
@@ -154,9 +199,61 @@ public class Controller {
             }
             // This step ensures that we switch to the correct Tab in case of a successful Wi-Fi scan
             main_tab_pane.getSelectionModel().select(wifi_scan_tab);
+
+            // We enable the OEM Lookup Button if our scan succeeds and if we have an internet connection
+            if (internetConnectionMonitorService.internet_conn == true){
+                wifi_router_oem_button.setDisable(false);
+            }
+
+            // If this has succeeded then we have Wi-Fi APs available for additional functions
+            scanned_wifi_aps_available = true;
         }
+    }
 
+    public void click_wifi_ap_oem_button(MouseEvent mouseEvent) throws IOException, customException {
 
+        // We iterate over the latest available set of scanned Wi-Fi APs (very similar to "click_scan_wifi_ap_button")
+        for (int i=0; i<latest_set_of_scanned_wifi_aps.length; i++){
+
+            // Every Pane in the "accordion" is a child that will be populated with Text
+            ObservableList<TitledPane> children = wifi_scan_accordion.getPanes();
+
+            // We individually check each String in the array to see if its proper JSON formatted
+            if (stringUtils.check_valid_json_str(latest_set_of_scanned_wifi_aps[i])){
+
+                // We create a separate string that will be modified to include an additional JSON key-value pair
+                // We do not need to use any specific instance of the wifiScan class for these functions.
+                // We choose to use the same instance of wifiScan as the rest of this file for consistency
+                String modified_wifi_ap_str = applicationWifiScan.format_json_str(latest_set_of_scanned_wifi_aps[i]);
+                modified_wifi_ap_str = applicationWifiScan.append_oem_to_json_string(modified_wifi_ap_str);
+                System.out.println("JSON string has been modified to: " + modified_wifi_ap_str);
+
+                // We use the JSON properties of the string to extract the SSID of the AP [added as Text]
+                String formatted_wifi_scan_str = wifiScan.format_json_str(modified_wifi_ap_str);
+                JSONObject json_ap = stringUtils.convert_string_to_json_obj(formatted_wifi_scan_str);
+                children.get(i).setText(json_ap.get("SSID").toString());
+
+                // We will automatically iterate over every available key in the JSON file
+                ArrayList<String> available_json_keys = stringUtils.return_available_json_keys(json_ap);
+
+                StringBuilder formatted_ap_str = new StringBuilder();
+
+                // We construct a formatted version of the JSON String
+                for (String key : available_json_keys) {
+                    // We print out every key-value pair as a separate "Text" object in the current TitledPane
+                    formatted_ap_str.append(key).append(": ").append(json_ap.get(key).toString()).append("\n");
+                }
+                // We add the final string as a singular "Text" object
+                final Text content = new Text(formatted_ap_str.toString());
+                content.setTextAlignment(TextAlignment.LEFT);
+                children.get(i).setContent(content);
+            }
+            else {
+                System.out.println("Failed to add OEM for Wi-Fi AP: " + latest_set_of_scanned_wifi_aps[i]);
+            }
+            // This step ensures that we switch to the correct Tab in case of a successful Wi-Fi scan
+            main_tab_pane.getSelectionModel().select(wifi_scan_tab);
+        }
     }
 
 }

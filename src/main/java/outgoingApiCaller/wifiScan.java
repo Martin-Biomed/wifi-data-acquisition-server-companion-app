@@ -5,6 +5,7 @@ import apiMsg.apiMsgConstructors;
 import outgoingApiCaller.bleConnection;
 import outgoingApiCaller.bleConnection.*;
 import Utils.stringUtils;
+import macManufacturerLookup.macManufacturerLookup;
 
 import org.json.JSONObject;
 import java.io.IOException;
@@ -12,6 +13,9 @@ import java.io.IOException;
 public class wifiScan {
 
     private static String reply_str;
+
+    // This variable is kept static because we potentially append the OEM manufacturer if the correct option is selected
+    private static String latest_formatted_string;
 
     // This function takes an existing instance of a BLE Connection as an input
     public static int execute_wifi_scan(bleConnection currentBleConnection) throws IOException {
@@ -251,7 +255,47 @@ public class wifiScan {
             jsonObject.remove("pair_cipher");
         }
 
-        return jsonObject.toString();
+        latest_formatted_string = jsonObject.toString();
+        return latest_formatted_string;
+    }
+
+    public static String append_oem_to_json_string(String input_json_str) throws IOException {
+
+        JSONObject jsonObject = stringUtils.convert_string_to_json_obj(input_json_str);
+
+        // First, we attempt to find the manufacturer based on the manufacturer
+        if (jsonObject.has("MAC Address")){
+           String mac_address = jsonObject.get("MAC Address").toString();
+           // We append the OEM as a new key-value pari in the JSON Object
+           try{
+               String oem_manufacturer = macManufacturerLookup.get_vendor_from_mac(mac_address);
+               System.out.println("Adding OEM to the JSON object: " + oem_manufacturer);
+
+               // If the reply from the previous function is JSON-formatted, it is almost certainly an error message
+               if (stringUtils.check_valid_json_str(oem_manufacturer)){
+                   oem_manufacturer = "(Unable to Find Manufacturer)";
+               }
+               jsonObject.put("Wi-Fi AP Manufacturer", oem_manufacturer);
+
+               // We sleep to avoid overloading the API server for MAC Address search (avoiding Error 429)
+               Thread.sleep(1000);
+
+               // We override the original value of (input_json_str) with the new JSON string that has the OEM as well
+               input_json_str = jsonObject.toString();
+               return input_json_str;
+           }
+           catch (IOException e){
+               System.out.println("Error Detected while trying to find OEM: " + e.toString());
+               return e.toString();
+           }
+           catch (InterruptedException e) {
+               throw new RuntimeException(e);
+           }
+        }
+        else{
+            System.out.println("JSON Object does not have key (MAC Address)");
+            return "JSON Object does not have key (MAC Address)";
+        }
 
     }
 
