@@ -12,7 +12,7 @@ public class apiMsgConstructors {
     }
 
     public static String create_wifi_connect_msg(String ssid_str, String pwd_str){
-        JSONObject obj=new JSONObject();
+        JSONObject obj = new JSONObject();
         obj.put("cmd","wifi_conn");
         obj.put("wifi_ssid", ssid_str);
         obj.put("wifi_pwd", pwd_str);
@@ -20,9 +20,9 @@ public class apiMsgConstructors {
     }
 
     public static String create_ping_msg(String host){
-        JSONObject obj=new JSONObject();
+        JSONObject obj = new JSONObject();
         obj.put("cmd","ping");
-        obj.put("wifi_ssid", host);
+        obj.put("host", host);
         return obj.toString();
     }
 

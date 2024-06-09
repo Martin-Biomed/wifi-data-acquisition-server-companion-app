@@ -8,11 +8,11 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
 <?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.effect.Glow?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -46,9 +46,9 @@
             <Insets />
          </VBox.margin>
     </MenuBar>
-    <SplitPane dividerPositions="0.2505567928730512, 0.7505567928730512" focusTraversable="true" minHeight="-Infinity" minWidth="-Infinity" prefHeight="553.0" prefWidth="970.0" VBox.vgrow="ALWAYS">
+    <SplitPane dividerPositions="0.2505567928730512" focusTraversable="true" minHeight="-Infinity" minWidth="-Infinity" prefHeight="553.0" prefWidth="970.0" VBox.vgrow="ALWAYS">
       <items>
-        <AnchorPane maxHeight="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="551.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
+        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="610.0" prefWidth="200.0" SplitPane.resizableWithParent="false">
           <children>
             <Label alignment="CENTER" layoutX="14.0" layoutY="14.0" minWidth="60.0" prefWidth="-1.0" style="&#10;" text="User Options" textAlignment="CENTER" wrapText="false">
               <font>
@@ -62,7 +62,7 @@
                      <padding>
                         <Insets left="20.0" right="20.0" />
                      </padding></Button>
-                  <Button fx:id="wifi_conn_execute_button" layoutX="4.0" layoutY="118.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Connect to a Wi-Fi AP" />
+                  <Button fx:id="wifi_conn_execute_button" layoutX="4.0" layoutY="118.0" mnemonicParsing="false" onMouseClicked="#click_connect_to_ap_button" prefHeight="25.0" prefWidth="192.0" text="Connect to a Wi-Fi AP" />
                   <Button fx:id="ping_host_button" layoutX="4.0" layoutY="152.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Ping a Host" />
                   <Button fx:id="configure_ble_conn_button" layoutX="4.0" layoutY="51.0" mnemonicParsing="false" onMouseClicked="#click_configure_ble_button" prefHeight="25.0" prefWidth="192.0" text="Configure BLE Connection" AnchorPane.leftAnchor="4.0">
                      <cursor>
@@ -90,20 +90,12 @@
                         <Font size="10.0" />
                      </font>
                   </Text>
+                  <Button fx:id="gps_location_button" layoutX="4.0" layoutY="188.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Get GPS Location" />
           </children>
         </AnchorPane>
-        <ScrollPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="551.0" prefWidth="184.0">
-          <content>
-            <AnchorPane id="Content" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="545.0" prefWidth="184.0">
-              <children>
-                <Label alignment="CENTER" font="$x1" layoutX="14.0" layoutY="14.0" style="&#10;" text="View" textAlignment="CENTER" textFill="$x2" wrapText="false" />
-              </children>
-            </AnchorPane>
-          </content>
-        </ScrollPane>
-        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="551.0" prefWidth="300.0">
+        <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="613.0" prefWidth="759.0">
           <children>
-                  <TabPane fx:id="main_tab_pane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE">
+                  <TabPane fx:id="main_tab_pane" layoutX="-1.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="613.0" prefWidth="762.0" tabClosingPolicy="UNAVAILABLE">
                     <tabs>
                       <Tab fx:id="ble_conn_tab" text="BLE Connection Details">
                            <content>
@@ -157,7 +149,7 @@
                       </Tab>
                         <Tab fx:id="wifi_scan_tab" text="Scanned Wi-Fi APs">
                            <content>
-                              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="584.0" prefWidth="568.0">
+                              <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="584.0" prefWidth="563.0">
                                  <children>
                                     <Accordion fx:id="wifi_scan_accordion" prefHeight="76.0" prefWidth="569.0">
                                       <panes>
@@ -237,7 +229,48 @@
                         </Tab>
                       <Tab fx:id="wifi_conn_tab" text="Wi-Fi AP Connection Details">
                            <content>
-                              <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+                              <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                 <children>
+                                    <Label fx:id="wifi_ssid_label" layoutX="25.0" layoutY="40.0" prefHeight="17.0" prefWidth="184.0" text="Wi-Fi Access Point SSID">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Text fx:id="wifi_ap_tab_title_text" layoutX="23.0" layoutY="29.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Connect the ESP32 to a Wi-Fi Access Point" wrappingWidth="291.9999998807907">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Text>
+                                    <TextField fx:id="wifi_ssid_text_field" layoutX="25.0" layoutY="64.0" prefHeight="25.0" prefWidth="287.0" promptText="Select a Wi-Fi AP SSID to Connect to" />
+                                    <Label fx:id="wifi_password_label" layoutX="25.0" layoutY="101.0" prefHeight="17.0" prefWidth="184.0" text="Wi-Fi Access Point Password">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="wifi_pwd_text_field" layoutX="25.0" layoutY="125.0" prefHeight="25.0" prefWidth="287.0" promptText="Enter the password for the Wi-Fi AP" />
+                                    <Text fx:id="wifi_ap_status_text" layoutX="14.0" layoutY="566.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ESP32 has not been connected to Wi-Fi" wrappingWidth="591.13671875">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Text>
+                                    <Text fx:id="wifi_conn_details_tab_text" layoutX="25.0" layoutY="198.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ESP32 Wi-Fi Connection Details" wrappingWidth="242.9999998807907">
+                                       <font>
+                                          <Font name="System Bold" size="14.0" />
+                                       </font>
+                                    </Text>
+                                    <Label fx:id="esp32_ip_label" layoutX="25.0" layoutY="212.0" prefHeight="17.0" prefWidth="200.0" text="ESP32 IP Address in the Network:">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Text fx:id="esp32_ip_addr_text" layoutX="235.0" layoutY="225.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No IPv4 IP Address Allocated Yet" wrappingWidth="258.13671875" />
+                                    <Label fx:id="esp32_subnet_label" layoutX="25.0" layoutY="240.0" prefHeight="17.0" prefWidth="226.0" text="ESP32 IP Subnet Mask in the Network:">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Text fx:id="esp32_subnet_mask_text" layoutX="252.0" layoutY="253.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Subnet Mask Allocated Yet" wrappingWidth="258.13671875" />
+                                 </children></AnchorPane>
                            </content>
                       </Tab>
                         <Tab fx:id="ping_details_tab" text="Ping Details">
@@ -263,7 +296,7 @@
         </Label>
         <Pane minHeight="-Infinity" minWidth="-Infinity" prefHeight="15.0" prefWidth="632.0" HBox.hgrow="ALWAYS">
                <children>
-                  <Circle fill="#ff411f" layoutX="1.0" layoutY="7.0" opacity="0.9" radius="5.0" stroke="#797777" strokeType="INSIDE" />
+                  <Circle fx:id="esp32_wifi_status_circle" fill="#ff411f" layoutX="1.0" layoutY="7.0" opacity="0.9" radius="5.0" stroke="#797777" strokeType="INSIDE" />
                </children></Pane>
         <Label font="$x3" maxWidth="-1.0" prefHeight="16.0" prefWidth="135.0" textFill="$x4" HBox.hgrow="NEVER" />
       </children>

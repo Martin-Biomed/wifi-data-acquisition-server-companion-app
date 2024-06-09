@@ -20,73 +20,27 @@ public class wifiScan {
     // This function takes an existing instance of a BLE Connection as an input
     public static int execute_wifi_scan(bleConnection currentBleConnection) throws IOException {
 
+        // We cannot start a Wi-Fi AP scan until all required BLE connection fields have been filled with values
         int result = currentBleConnection.check_mandatory_ble_parameters();
 
         String response_str;
 
+        // Create a properly formatted JSON string like the API serve expects for the "wifi_scan" command
         String message = apiMsgConstructors.create_wifi_scan_msg();
 
         // We only send a message if our BLE connection parameters have already been correctly set.
         // Note: Error -10 means there was an error when using the API calls
         if (result == 0){
 
-            // These Device Name and MAC are only updated if the user has provided them (as only one of the two is required)
-            if (!currentBleConnection.get_ble_device_name().isEmpty()){
-                response_str = outgoingApiCaller.execute_api_call(
-                        currentBleConnection.get_ble_device_name(), Constants.device_name_topic, "PUT", Constants.BLE_Client_hostname, Constants.BLE_Client_port);
-
-                if (!response_str.contains("Value Updated")){
-                    reply_str = response_str + " (While Updating Device Name)";
-                    return -10;
-                }
-            }
-
-            if(!currentBleConnection.get_macAddress().isEmpty()){
-                response_str = outgoingApiCaller.execute_api_call(
-                        currentBleConnection.get_macAddress(), Constants.device_name_topic, "PUT", Constants.BLE_Client_hostname, Constants.BLE_Client_port);
-
-                if (!response_str.contains("Value Updated")){
-                    reply_str = response_str + " (While Updating Device MAC Address)";
-                    return -10;
-                }
-            }
-
-
-            response_str = outgoingApiCaller.execute_api_call(
-                    currentBleConnection.get_device_read_uuid(), Constants.gatt_read_topic, "PUT", Constants.BLE_Client_hostname, Constants.BLE_Client_port);
-
-            if (!response_str.contains("Value Updated")){
-                reply_str = response_str + " (While Updating Read UUID)";
-                return -10;
-            }
-
-            response_str = outgoingApiCaller.execute_api_call(
-                    currentBleConnection.get_device_write_uuid(), Constants.gatt_write_topic, "PUT", Constants.BLE_Client_hostname, Constants.BLE_Client_port);
-
-            if (!response_str.contains("Value Updated")){
-                reply_str = response_str + " (While Updating Write UUID)";
-                return -10;
-            }
-
-            response_str = outgoingApiCaller.execute_api_call(
-                    message, Constants.msg_topic, "PUT", Constants.BLE_Client_hostname, Constants.BLE_Client_port);
-
-            if (!response_str.contains("Value Updated")){
-                reply_str = response_str + " (While Updating Message to be Sent)";
-                return -10;
-            }
-
-            response_str = outgoingApiCaller.execute_api_call(
-                    "", Constants.send_msg_topic, "POST", Constants.BLE_Client_hostname, Constants.BLE_Client_port);
+            reply_str = currentBleConnection.send_new_ble_msg_to_esp32(message, currentBleConnection);
 
             // If the string is not JSON formatted, then it is likely an error message response from the App
-            if (!stringUtils.check_valid_json_str(response_str)){
-                reply_str = response_str + " (After sending the message)";
+            if (!stringUtils.check_valid_json_str(reply_str)){
+                reply_str = reply_str + " (After sending the message)";
                 return -10;
             }
 
-            reply_str = response_str;
-
+            // API Call has received a reply (not necessarily a success API Call)
             return 0;
         }
 

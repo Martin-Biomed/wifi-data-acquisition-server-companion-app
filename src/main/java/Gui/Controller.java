@@ -17,6 +17,8 @@ import org.json.JSONObject;
 import outgoingApiCaller.outgoingApiCaller;
 import outgoingApiCaller.bleConnection;
 import outgoingApiCaller.wifiScan;
+import outgoingApiCaller.esp32WifiConnection;
+
 import Utils.stringUtils;
 import Gui.checkDesktopInternetConnectionService;
 
@@ -35,6 +37,10 @@ public class Controller {
     @FXML
     private TabPane main_tab_pane;
 
+    // Available GUI Tabs
+    @FXML
+    private Tab wifi_scan_tab, wifi_conn_tab, ping_details_tab;
+
     // These are objects available in the "BLE Connection Details" Tab
     @FXML
     private TextArea device_name_text_field, device_addr_text_field, device_ble_gatt_read_text_field, device_ble_gatt_write_text_field;
@@ -48,8 +54,6 @@ public class Controller {
     // These are objects available in the "Scanned Wi-Fi APs" Tab
     @FXML
     private Accordion wifi_scan_accordion;
-    @FXML
-    private Tab wifi_scan_tab;
 
     // These Objects are related to showing the Internet Connection Status of the Desktop
     @FXML
@@ -59,17 +63,20 @@ public class Controller {
 
     // These are the different buttons that are available in the GUI
     @FXML
-    private Button wifi_scan_option_button;
+    private Button wifi_scan_option_button, wifi_conn_execute_button, ping_host_button, wifi_router_oem_button, gps_location_button;
+
+    // These are Objects associated with connecting the ESP32 to a Wi-Fi AP
     @FXML
-    private Button wifi_conn_execute_button;
+    private TextField wifi_ssid_text_field, wifi_pwd_text_field;
     @FXML
-    private Button ping_host_button;
+    private Circle esp32_wifi_status_circle;
     @FXML
-    private Button wifi_router_oem_button;
+    private Text wifi_ap_status_text, esp32_ip_addr_text, esp32_subnet_mask_text;
 
     // Object Instances that are only ever initialised once in the lifecycle of the JAR application
     public static bleConnection applicationBleConnection;
     public static wifiScan applicationWifiScan;
+    public static esp32WifiConnection applicationEsp32WifiConn;
     public static checkDesktopInternetConnectionService internetConnectionMonitorService;
 
     // This variable is used when determining whether we can lookup Wi-Fi AP manufacturers (only if a scan has occurred)
@@ -80,6 +87,7 @@ public class Controller {
     public void initialize(){
         applicationBleConnection = new bleConnection();
         applicationWifiScan = new wifiScan();
+        applicationEsp32WifiConn = new esp32WifiConnection();
 
         // Start the JavaFx task for monitoring Internet Connectivity
         internetConnectionMonitorService = new checkDesktopInternetConnectionService(
@@ -93,16 +101,18 @@ public class Controller {
         wifi_conn_execute_button.setDisable(true);
         ping_host_button.setDisable(true);
         wifi_router_oem_button.setDisable(true);
+        gps_location_button.setDisable(true);
 
     }
 
     // We set the BLE Connection static variables in our instance of bleConnection (shared between all BLE functions)
     public void click_configure_ble_button(MouseEvent mouseEvent) {
 
-        // We always start by disabling all dependent Buttons in case we fail to configure the ESP32 BLE GATT conenction
+        // We always start by disabling all dependent Buttons in case we fail to configure the ESP32 BLE GATT connection
         wifi_scan_option_button.setDisable(true);
         wifi_conn_execute_button.setDisable(true);
         ping_host_button.setDisable(true);
+        gps_location_button.setDisable(true);
 
         // We only send the value if not empty to avoid Null Pointer Exception for a JavaFx Text Field
         applicationBleConnection.set_ble_device_name(device_name_text_field.getText());
@@ -139,7 +149,8 @@ public class Controller {
                 // We re-enable the Buttons which are dependent on successfully setting up the BLE Connection first
                 wifi_scan_option_button.setDisable(false);
                 wifi_conn_execute_button.setDisable(false);
-                ping_host_button.setDisable(false);
+                gps_location_button.setDisable(false);
+                ping_host_button.setDisable(true); // Ping cannot be used unless ESP32 is connected to a Wi-Fi AP
         }
 
         // This step ensures that we switch to the correct Tab everytime the button is clicked.
@@ -178,6 +189,7 @@ public class Controller {
                 if (!stringUtils.check_valid_json_str(array_of_json_aps[i])) {
                     children.get(i).setContent(new Text("Error converting String to JSON Object"));
                 }
+                // We convert the JSON string from the ESP32 to a more human-readable JSON string
                 String formatted_wifi_scan_str = wifiScan.format_json_str(array_of_json_aps[i]);
                 JSONObject json_ap = stringUtils.convert_string_to_json_obj(formatted_wifi_scan_str);
                 children.get(i).setText(json_ap.get("SSID").toString());
@@ -253,6 +265,65 @@ public class Controller {
             }
             // This step ensures that we switch to the correct Tab in case of a successful Wi-Fi scan
             main_tab_pane.getSelectionModel().select(wifi_scan_tab);
+        }
+    }
+
+    public void click_connect_to_ap_button(MouseEvent event) throws IOException {
+
+        String SSID = wifi_ssid_text_field.getText().toString();
+        String PWD = wifi_pwd_text_field.getText().toString();
+
+        int result;
+
+        // If the user has tried to execute a Wi-Fi AP connection without entering the SSID or PWD fields, its an error
+        if (SSID.isEmpty() || PWD.isEmpty()){
+            esp32_wifi_status_circle.setFill(Color.rgb(180, 10, 10));
+            wifi_ap_status_text.setText("Error: SSID and/or PWD have not been provided.");
+            System.out.println("Error: SSID and/or PWD have not been provided.");
+            main_tab_pane.getSelectionModel().select(wifi_conn_tab);
+            result = -20;
+        }
+        else {
+            result = applicationEsp32WifiConn.execute_wifi_connection(applicationBleConnection, SSID, PWD);
+        }
+
+        if (result != 0 && result != -20) {
+            // These error messages are displayed in the "Wi-Fi AP Connection Details" Tab
+            esp32_wifi_status_circle.setFill(Color.rgb(180, 10, 10));
+            wifi_ap_status_text.setText("Error Detected: [" + applicationEsp32WifiConn.get_reply_str() + "]");
+            System.out.println("Error Detected: [" + applicationEsp32WifiConn.get_reply_str() + "]");
+            // Ensures that we switch to the Wi-Fi Connection Details Tab which shows the error message from the API call
+            main_tab_pane.getSelectionModel().select(wifi_conn_tab);
+        }
+        else {
+            // In case of successful Wi-Fi AP connection, we update the GUI to reflect this success
+            String wifi_conn_str = applicationEsp32WifiConn.get_reply_str();
+
+            // We update additional information fields on a successful Wi-Fi Connection
+            if (stringUtils.check_valid_json_str(wifi_conn_str)){
+
+                // We update the JavaFx objects based on the outcome from the Wi-Fi AP connection
+                JSONObject json_wifi_conn = stringUtils.convert_string_to_json_obj(wifi_conn_str);
+
+                if (json_wifi_conn.keySet().contains("esp32_ip_addr")){
+                    esp32_ip_addr_text.setText(json_wifi_conn.get("esp32_ip_addr").toString());
+                }
+
+                if (json_wifi_conn.keySet().contains("esp32_netmask")){
+                    esp32_subnet_mask_text.setText(json_wifi_conn.get("esp32_netmask").toString());
+                }
+
+                if (json_wifi_conn.keySet().contains("wifi_conn_success")){
+                    wifi_ap_status_text.setText("ESP32 can successfully connect to Wi-Fi AP: " + SSID);
+                    esp32_wifi_status_circle.setFill(Color.rgb(10, 150, 10));
+                }
+                main_tab_pane.getSelectionModel().select(wifi_conn_tab);
+            }
+            else {
+                esp32_wifi_status_circle.setFill(Color.rgb(180, 10, 10));
+                wifi_ap_status_text.setText("Problem with parsing response from: " + SSID + "(Not JSON)");
+            }
+
         }
     }
 
