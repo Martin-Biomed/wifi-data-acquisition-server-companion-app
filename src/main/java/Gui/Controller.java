@@ -159,6 +159,8 @@ public class Controller {
 
     public void click_scan_wifi_ap_button(MouseEvent mouseEvent) throws IOException, customException {
 
+        applicationWifiScan = Reset.reset_wifi_scan_tab(applicationWifiScan, wifi_scan_accordion);
+
         int result = applicationWifiScan.execute_wifi_scan(applicationBleConnection);
 
         if (result != 0){
@@ -270,6 +272,8 @@ public class Controller {
 
     public void click_connect_to_ap_button(MouseEvent event) throws IOException {
 
+        applicationEsp32WifiConn = Reset.reset_wifi_conn_tab(applicationEsp32WifiConn, esp32_ip_addr_text, esp32_subnet_mask_text);
+
         String SSID = wifi_ssid_text_field.getText().toString();
         String PWD = wifi_pwd_text_field.getText().toString();
 
@@ -314,8 +318,9 @@ public class Controller {
                 }
 
                 if (json_wifi_conn.keySet().contains("wifi_conn_success")){
-                    wifi_ap_status_text.setText("ESP32 can successfully connect to Wi-Fi AP: " + SSID);
+                    wifi_ap_status_text.setText("ESP32 can connect to Wi-Fi AP: " + SSID + " [AP Credentials Saved]");
                     esp32_wifi_status_circle.setFill(Color.rgb(10, 150, 10));
+                    ping_host_button.setDisable(false);
                 }
                 main_tab_pane.getSelectionModel().select(wifi_conn_tab);
             }
@@ -323,7 +328,6 @@ public class Controller {
                 esp32_wifi_status_circle.setFill(Color.rgb(180, 10, 10));
                 wifi_ap_status_text.setText("Problem with parsing response from: " + SSID + "(Not JSON)");
             }
-
         }
     }
 

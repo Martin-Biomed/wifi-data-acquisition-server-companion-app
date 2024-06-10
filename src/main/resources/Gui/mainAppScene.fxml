@@ -227,7 +227,7 @@
                                  </children></AnchorPane>
                            </content>
                         </Tab>
-                      <Tab fx:id="wifi_conn_tab" text="Wi-Fi AP Connection Details">
+                      <Tab fx:id="wifi_conn_tab" text="ESP32 Wi-Fi AP Connection Details">
                            <content>
                               <AnchorPane prefHeight="200.0" prefWidth="200.0">
                                  <children>
@@ -241,13 +241,13 @@
                                           <Font name="System Bold" size="14.0" />
                                        </font>
                                     </Text>
-                                    <TextField fx:id="wifi_ssid_text_field" layoutX="25.0" layoutY="64.0" prefHeight="25.0" prefWidth="287.0" promptText="Select a Wi-Fi AP SSID to Connect to" />
+                                    <TextField fx:id="wifi_ssid_text_field" layoutX="25.0" layoutY="64.0" prefHeight="25.0" prefWidth="376.0" promptText="Select a Wi-Fi AP SSID to Connect to" />
                                     <Label fx:id="wifi_password_label" layoutX="25.0" layoutY="101.0" prefHeight="17.0" prefWidth="184.0" text="Wi-Fi Access Point Password">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>
                                     </Label>
-                                    <TextField fx:id="wifi_pwd_text_field" layoutX="25.0" layoutY="125.0" prefHeight="25.0" prefWidth="287.0" promptText="Enter the password for the Wi-Fi AP" />
+                                    <TextField fx:id="wifi_pwd_text_field" layoutX="25.0" layoutY="125.0" prefHeight="25.0" prefWidth="375.0" promptText="Enter the password for the Wi-Fi AP" />
                                     <Text fx:id="wifi_ap_status_text" layoutX="14.0" layoutY="566.0" strokeType="OUTSIDE" strokeWidth="0.0" text="ESP32 has not been connected to Wi-Fi" wrappingWidth="591.13671875">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
@@ -275,7 +275,50 @@
                       </Tab>
                         <Tab fx:id="ping_details_tab" text="Ping Details">
                           <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="522.0" prefWidth="568.0" />
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="522.0" prefWidth="568.0">
+                                 <children>
+                                    <Label fx:id="ping_host_label" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="404.0" text="Select a Host to Ping (Can be an IP address or a Hostname/URL)">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <TextField fx:id="ping_host_text_field" layoutX="14.0" layoutY="39.0" prefHeight="25.0" prefWidth="668.0" promptText="Enter Host Here" />
+                                    <Label fx:id="ping_details_label" layoutX="14.0" layoutY="82.0" prefHeight="25.0" prefWidth="135.0" text="Ping Details">
+                                       <font>
+                                          <Font name="System Bold" size="13.0" />
+                                       </font>
+                                    </Label>
+                                    <Text layoutX="14.0" layoutY="119.0" strokeType="OUTSIDE" strokeWidth="0.0" text="This list of data corresponds to the outcome of a single ICMP echo request from the ESP32 to the selected host." wrappingWidth="638.13671875" />
+                                    <Label fx:id="host_ip_addr_label" layoutX="14.0" layoutY="135.0" prefHeight="17.0" prefWidth="104.0" text="Host IP Address:">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Text fx:id="host_ip_result_text" layoutX="117.0" layoutY="148.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No IP Address Found for Selected Host" wrappingWidth="248.99998211860657" />
+                                    <Label fx:id="ping_ttl_label" layoutX="14.0" layoutY="159.0" prefHeight="17.0" prefWidth="200.0" text="ICMP Request Time-to-Live (TTL):">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Text fx:id="ping_ttl_text" layoutX="214.0" layoutY="172.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No TTL Value Given" wrappingWidth="117.00002431869507" />
+                                    <Label fx:id="ping_seq_num_label" layoutX="14.0" layoutY="184.0" prefHeight="17.0" prefWidth="200.0" text="ICMP Request Sequence Number:">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Text fx:id="ping_seq_num_text" layoutX="214.0" layoutY="197.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Sequence Number Value Given" wrappingWidth="184.99998211860657" />
+                                    <Label fx:id="ping_time_label" layoutX="14.0" layoutY="209.0" prefHeight="17.0" prefWidth="172.0" text="ICMP Request Elapsed Time:">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font>
+                                    </Label>
+                                    <Text fx:id="ping_time_text" layoutX="180.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Elapsed Time Value Given" wrappingWidth="184.99998211860657" />
+                                 </children></AnchorPane>
+                          </content>
+                        </Tab>
+                        <Tab text="ESP32 GPS Location">
+                          <content>
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
                           </content>
                         </Tab>
                     </tabs>
