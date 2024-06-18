@@ -8,6 +8,7 @@ import Utils.stringUtils;
 
 import org.json.JSONObject;
 import outgoingApiCaller.*;
+
 import apiMsg.*;
 
 import java.io.IOException;
@@ -28,7 +29,8 @@ public class manualCmds {
         String message = apiMsgConstructors.create_wifi_scan_msg();
 
         String response_str;
-        //String ble_device_name = "";
+
+
         response_str = outgoingApiCaller.execute_api_call(
                 ble_device_name, Constants.device_name_topic, "PUT", Constants.BLE_Client_hostname, Constants.BLE_Client_port);
 

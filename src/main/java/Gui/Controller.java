@@ -4,9 +4,9 @@ import customExceptions.customException;
 import javafx.collections.ObservableList;
 import javafx.scene.control.*;
 
-import Constants.Constants;
 import javafx.fxml.FXML;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
@@ -14,16 +14,16 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 import org.json.JSONObject;
-import outgoingApiCaller.outgoingApiCaller;
 import outgoingApiCaller.bleConnection;
 import outgoingApiCaller.wifiScan;
 import outgoingApiCaller.esp32WifiConnection;
+import outgoingApiCaller.gpsCaller;
+import gpsProcessing.gpsGeolocator;
 
 import Utils.stringUtils;
-import Gui.checkDesktopInternetConnectionService;
+import sun.plugin.javascript.navig4.Anchor;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
 // This file contains all the EventHandlers for the JavaFx Application
@@ -39,15 +39,13 @@ public class Controller {
 
     // Available GUI Tabs
     @FXML
-    private Tab wifi_scan_tab, wifi_conn_tab, ping_details_tab;
+    private Tab ble_conn_tab, wifi_scan_tab, wifi_conn_tab, ping_details_tab, esp32_gps_tab;
 
     // These are objects available in the "BLE Connection Details" Tab
     @FXML
     private TextArea device_name_text_field, device_addr_text_field, device_ble_gatt_read_text_field, device_ble_gatt_write_text_field;
     @FXML
     private Text ble_conn_confirmation_label;
-    @FXML
-    private Tab ble_conn_tab;
     @FXML
     private Circle esp32_conn_status_circle;
 
@@ -63,7 +61,8 @@ public class Controller {
 
     // These are the different buttons that are available in the GUI
     @FXML
-    private Button wifi_scan_option_button, wifi_conn_execute_button, ping_host_button, wifi_router_oem_button, gps_location_button;
+    private Button wifi_scan_option_button, wifi_conn_execute_button, ping_host_button, wifi_router_oem_button,
+            esp_gps_location_button, esp32_geoapify_button;
 
     // These are Objects associated with connecting the ESP32 to a Wi-Fi AP
     @FXML
@@ -73,11 +72,24 @@ public class Controller {
     @FXML
     private Text wifi_ap_status_text, esp32_ip_addr_text, esp32_subnet_mask_text;
 
+    // These are Object associated with the GPS functionality of the ESP32 and Java App
+    @FXML
+    private TitledPane esp32_gprmc_data_titledpane;
+    @FXML
+    private SplitPane esp32_gps_splitpane;
+    @FXML
+    private AnchorPane offline_gps_pane, online_gps_pane, geoapify_result_anchorpane, gps_offline_scrollpane_anchorpane;
+    @FXML
+    private TextField esp32_geoapify_textfield;
+    @FXML
+    private ScrollPane gps_offline_scrollpane;
+
     // Object Instances that are only ever initialised once in the lifecycle of the JAR application
     public static bleConnection applicationBleConnection;
     public static wifiScan applicationWifiScan;
     public static esp32WifiConnection applicationEsp32WifiConn;
     public static checkDesktopInternetConnectionService internetConnectionMonitorService;
+    public static gpsCaller esp32GpsCaller;
 
     // This variable is used when determining whether we can lookup Wi-Fi AP manufacturers (only if a scan has occurred)
     private static boolean scanned_wifi_aps_available = false;
@@ -88,6 +100,7 @@ public class Controller {
         applicationBleConnection = new bleConnection();
         applicationWifiScan = new wifiScan();
         applicationEsp32WifiConn = new esp32WifiConnection();
+        esp32GpsCaller = new gpsCaller();
 
         // Start the JavaFx task for monitoring Internet Connectivity
         internetConnectionMonitorService = new checkDesktopInternetConnectionService(
@@ -101,7 +114,7 @@ public class Controller {
         wifi_conn_execute_button.setDisable(true);
         ping_host_button.setDisable(true);
         wifi_router_oem_button.setDisable(true);
-        gps_location_button.setDisable(true);
+        esp_gps_location_button.setDisable(true);
 
     }
 
@@ -112,7 +125,7 @@ public class Controller {
         wifi_scan_option_button.setDisable(true);
         wifi_conn_execute_button.setDisable(true);
         ping_host_button.setDisable(true);
-        gps_location_button.setDisable(true);
+        esp_gps_location_button.setDisable(true);
 
         // We only send the value if not empty to avoid Null Pointer Exception for a JavaFx Text Field
         applicationBleConnection.set_ble_device_name(device_name_text_field.getText());
@@ -149,7 +162,7 @@ public class Controller {
                 // We re-enable the Buttons which are dependent on successfully setting up the BLE Connection first
                 wifi_scan_option_button.setDisable(false);
                 wifi_conn_execute_button.setDisable(false);
-                gps_location_button.setDisable(false);
+                esp_gps_location_button.setDisable(false);
                 ping_host_button.setDisable(true); // Ping cannot be used unless ESP32 is connected to a Wi-Fi AP
         }
 
@@ -247,12 +260,12 @@ public class Controller {
                 JSONObject json_ap = stringUtils.convert_string_to_json_obj(formatted_wifi_scan_str);
                 children.get(i).setText(json_ap.get("SSID").toString());
 
-                // We will automatically iterate over every available key in the JSON file
+                // We will automatically iterate over every available key in the JSON object
                 ArrayList<String> available_json_keys = stringUtils.return_available_json_keys(json_ap);
 
                 StringBuilder formatted_ap_str = new StringBuilder();
 
-                // We construct a formatted version of the JSON String
+                // We construct a printable version of each JSON key-value pair
                 for (String key : available_json_keys) {
                     // We print out every key-value pair as a separate "Text" object in the current TitledPane
                     formatted_ap_str.append(key).append(": ").append(json_ap.get(key).toString()).append("\n");
@@ -330,5 +343,66 @@ public class Controller {
             }
         }
     }
+
+    public void click_esp_gps_button(MouseEvent event) throws IOException, customException {
+
+        esp32GpsCaller = Reset.reset_esp_gps_tab(esp32GpsCaller);
+
+        String gprmc_str = esp32GpsCaller.request_gps_gprmc_data_value(applicationBleConnection);
+        JSONObject gprmc_obj = esp32GpsCaller.create_gprmc_json_obj(gprmc_str);
+
+        System.out.println("Parsed GPS Object: " + gprmc_obj.toString());
+        String formatted_gprmc_str = "Raw GPRMC Sentence: \n " + gprmc_str + "\n\n";
+
+        // We will automatically iterate over every available key in the JSON object
+        ArrayList<String> available_json_keys = stringUtils.return_available_json_keys(gprmc_obj);
+
+        StringBuilder printable_gprmc_str = new StringBuilder();
+
+        // We construct a printable version of each JSON key-value pair
+        for (String key : available_json_keys) {
+            // We print out every key-value pair as a separate "Text" object in the current TitledPane
+            printable_gprmc_str.append(key).append(": ").append(gprmc_obj.get(key).toString()).append("\n");
+        }
+
+        // We add the final string as a singular "TextArea" object
+        final TextArea content = new TextArea(formatted_gprmc_str + printable_gprmc_str.toString());
+        content.setEditable(false);
+
+        // To ensure that the TextArea fills the AnchorPane, you must anchor the content to all four sides of the AnchorPane
+        gps_offline_scrollpane_anchorpane.getChildren().add(content);
+        AnchorPane.setTopAnchor(content, 0.0);
+        AnchorPane.setBottomAnchor(content, 0.0);
+        AnchorPane.setRightAnchor(content, 0.0);
+        AnchorPane.setLeftAnchor(content, 0.0);
+
+        main_tab_pane.getSelectionModel().select(esp32_gps_tab);
+
+    }
+
+    public void click_esp_geoapify_button(MouseEvent event) throws IOException {
+
+        String longitude = esp32GpsCaller.get_longitude();
+        String latitude = esp32GpsCaller.get_latitude();
+
+        String api_key = esp32_geoapify_textfield.getText();
+
+        String api_response = gpsGeolocator.send_geoapify_api_request(latitude, longitude, api_key);
+
+        String address = gpsGeolocator.parse_geoapify_api_response(api_response);
+        System.out.println("Coordinates point to the following address: " + address);
+
+        // We add the final string as a singular "TextArea" object
+        final TextArea content = new TextArea("Found Address: " + address);
+        content.setEditable(false);
+
+        geoapify_result_anchorpane.getChildren().add(content);
+        AnchorPane.setTopAnchor(content, 0.0);
+        AnchorPane.setBottomAnchor(content, 0.0);
+        AnchorPane.setRightAnchor(content, 0.0);
+        AnchorPane.setLeftAnchor(content, 0.0);
+
+    }
+
 
 }

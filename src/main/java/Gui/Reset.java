@@ -6,6 +6,7 @@ import javafx.scene.control.Accordion;
 import javafx.scene.control.TitledPane;
 import javafx.scene.text.Text;
 import outgoingApiCaller.esp32WifiConnection;
+import outgoingApiCaller.gpsCaller;
 import outgoingApiCaller.wifiScan;
 
 /** This class can be used to access functions to reset different JavaFx Scene Objects to a known State */
@@ -42,6 +43,17 @@ public class Reset {
         subnet_mask_field.setText(SceneDefaultValues.default_esp32_subnet_mask_text);
 
         return currentWifiConnection;
+    }
+
+    public static gpsCaller reset_esp_gps_tab(gpsCaller currentGpsCaller){
+
+        System.out.println("Resetting the ESP32 GPS Tab");
+
+        // We re-initialise the instance of the class (and all its variables)
+        currentGpsCaller = new gpsCaller();
+
+        return currentGpsCaller;
+
     }
 
 

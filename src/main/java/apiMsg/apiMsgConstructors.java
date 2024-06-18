@@ -19,10 +19,16 @@ public class apiMsgConstructors {
         return obj.toString();
     }
 
-    public static String create_ping_msg(String host){
+    public String create_ping_msg(String host){
         JSONObject obj = new JSONObject();
         obj.put("cmd","ping");
         obj.put("host", host);
+        return obj.toString();
+    }
+
+    public static String create_gps_msg(){
+        JSONObject obj = new JSONObject();
+        obj.put("cmd","gps_location");
         return obj.toString();
     }
 

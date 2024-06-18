@@ -19,4 +19,7 @@ public class Constants {
     public static final String send_msg_topic = "/send_msg";
     public static final String result_topic = "/result_str";
 
+    /** Base URL for the Geoapify API for extracting data from GPRMC sentences */
+    public static final String geoapify_reverse_geocoding_url = "https://api.geoapify.com/v1/geocode/reverse";
+
 }

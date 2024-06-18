@@ -8,6 +8,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.Tab?>
 <?import javafx.scene.control.TabPane?>
@@ -90,7 +91,7 @@
                         <Font size="10.0" />
                      </font>
                   </Text>
-                  <Button fx:id="gps_location_button" layoutX="4.0" layoutY="188.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Get GPS Location" />
+                  <Button fx:id="esp_gps_location_button" layoutX="4.0" layoutY="188.0" mnemonicParsing="false" onMouseClicked="#click_esp_gps_button" prefHeight="25.0" prefWidth="192.0" text="Get ESP32 GPS Location" />
           </children>
         </AnchorPane>
         <AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="613.0" prefWidth="759.0">
@@ -316,9 +317,54 @@
                                  </children></AnchorPane>
                           </content>
                         </Tab>
-                        <Tab text="ESP32 GPS Location">
+                        <Tab fx:id="esp32_gps_tab" text="ESP32 GPS Location">
                           <content>
-                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                 <children>
+                                    <TitledPane fx:id="esp32_gprmc_data_titledpane" animated="false" prefHeight="288.0" prefWidth="762.0" text="ESP32 GPRMC Sentence (GPS Data)">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="267.0" prefWidth="760.0">
+                                             <children>
+                                                <SplitPane fx:id="esp32_gps_splitpane" dividerPositions="0.5" layoutX="-2.0" prefHeight="262.0" prefWidth="755.0">
+                                                   <items>
+                                                      <AnchorPane fx:id="offline_gps_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="261.0" prefWidth="337.0">
+                                                         <children>
+                                                            <ScrollPane fx:id="gps_offline_scrollpane" prefHeight="261.0" prefWidth="338.0">
+                                                              <content>
+                                                                <AnchorPane fx:id="gps_offline_scrollpane_anchorpane" minHeight="0.0" minWidth="0.0" prefHeight="368.0" prefWidth="459.0" />
+                                                              </content>
+                                                            </ScrollPane>
+                                                         </children></AnchorPane>
+                                                      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+                                                         <children>
+                                                            <SplitPane dividerPositions="0.4866920152091255" layoutY="-4.0" orientation="VERTICAL" prefHeight="265.0" prefWidth="401.0">
+                                                              <items>
+                                                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="100.0" prefWidth="160.0">
+                                                                     <children>
+                                                                        <Button fx:id="esp32_geoapify_button" layoutX="14.0" layoutY="50.0" mnemonicParsing="false" onMouseClicked="#click_esp_geoapify_button" prefHeight="25.0" prefWidth="242.0" text="Attempt to find Address on Geoapify" />
+                                                                        <TextField fx:id="esp32_geoapify_textfield" layoutX="14.0" layoutY="14.0" prefHeight="25.0" prefWidth="330.0" promptText="Enter a Geoapify API key here" />
+                                                                        <Text layoutX="14.0" layoutY="96.0" strokeType="OUTSIDE" strokeWidth="0.0" text="This feature requires a PC internet connection " wrappingWidth="306.13671875" />
+                                                                     </children>
+                                                                  </AnchorPane>
+                                                                <AnchorPane fx:id="geoapify_result_anchorpane" minHeight="0.0" minWidth="0.0" prefHeight="96.0" prefWidth="307.0">
+                                                                     <children>
+                                                                        <ScrollPane prefHeight="134.0" prefWidth="400.0">
+                                                                          <content>
+                                                                            <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="480.0" />
+                                                                          </content>
+                                                                        </ScrollPane>
+                                                                     </children></AnchorPane>
+                                                              </items>
+                                                            </SplitPane>
+                                                         </children>
+                                                      </AnchorPane>
+                                                   </items>
+                                                </SplitPane>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </TitledPane>
+                                 </children></AnchorPane>
                           </content>
                         </Tab>
                     </tabs>
