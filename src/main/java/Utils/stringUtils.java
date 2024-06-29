@@ -4,12 +4,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
+
 import java.util.Iterator;
-import java.util.Random;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import customExceptions.customException;
 
@@ -97,4 +94,26 @@ public class stringUtils {
         }
         return array_of_keys;
     }
+
+    public static JSONObject convert_multiline_string_to_json_obj(String input_string){
+
+        JSONObject jsonObject = new JSONObject();
+        if (!input_string.contains("\n")){
+            System.out.println("Input String is not composed of multiple lines.");
+            return jsonObject;
+        }
+
+        // Each line in the string has form: "key: value"
+        String[] lines = input_string.split("\n");
+        System.out.println("Starting the process of splitting the String (Before Converting to JSON)");
+
+        for (String line : lines){
+            String[] key_value_str = line.split(": ");
+            System.out.println("The following parts have been separated: " + key_value_str[0] + "," + key_value_str[1]);
+            jsonObject.put(key_value_str[0], key_value_str[1]);
+        }
+
+        return jsonObject;
+    }
+
 }

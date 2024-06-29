@@ -8,6 +8,15 @@ import Utils.httpUtils;
 
 import Constants.Constants;
 
+/** This Class is intended to be used to try to determine the Equipment Manufacturer of a Wi-Fi AP
+ * based on the detected MAC Address.
+ *
+ * To extract the Coordinates, we use an online API defined by (MAC_OEM_Lookup_baseURL).
+ *
+ * Calls to the API are not always guaranteed to return valid data.
+ *
+ */
+
 public class macManufacturerLookup {
 
     // Java Functions require you to throw an exception when a possible error can be anticipated.
@@ -25,7 +34,8 @@ public class macManufacturerLookup {
         } catch (IOException e){
             // This error can be thrown by a number of situations.
             // Situations include, wrong input type provided as macAddress, or an inability to make external queries
-            return null;
+            System.out.println("Error Detected: " + e.toString());
+            throw new RuntimeException(e);
         }
     }
 }

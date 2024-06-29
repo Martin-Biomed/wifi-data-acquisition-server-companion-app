@@ -6,8 +6,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
+
+/** This Class is intended to be used to try to determine the address of where the ESP32 has been deployed based on the
+ * GPS numerical coordinates returned from the ESP32.
+ *
+ * Note: This Class is only useful once we have successfully parsed the GPS coordinates from the ESP32.
+ *
+ * To extract the Coordinates, we use an online API defined by (geoapify_reverse_geocoding_url).
+ */
 
 public class gpsGeolocator {
 

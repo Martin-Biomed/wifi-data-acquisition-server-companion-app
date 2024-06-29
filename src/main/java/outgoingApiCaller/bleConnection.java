@@ -4,10 +4,11 @@ import Constants.Constants;
 
 import java.io.IOException;
 
-/*
+/**
  This class is used to execute functions that are related to the BLE connection to the ESP32.
+
  This class is not inherited by any other class, it serves as a standalone object that stores the latest
- values which define the BLE GATT connection.
+ set of static variables which define the BLE GATT connection between the PC and the ESP32.
 */
 public class bleConnection {
 

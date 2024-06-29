@@ -2,13 +2,15 @@ package outgoingApiCaller;
 
 import Constants.Constants;
 import apiMsg.apiMsgConstructors;
-import outgoingApiCaller.bleConnection;
-import outgoingApiCaller.bleConnection.*;
+import javafx.scene.control.TitledPane;
+import javafx.scene.text.Text;
+import javafx.scene.text.TextAlignment;
 import Utils.stringUtils;
 import macManufacturerLookup.macManufacturerLookup;
 
 import org.json.JSONObject;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class wifiScan {
 
@@ -253,9 +255,39 @@ public class wifiScan {
 
     }
 
-
     public static String get_reply_str(){
         return reply_str;
+    }
+
+    public static void print_ap_data_to_textArea(ArrayList<String> available_json_keys, JSONObject json_ap, TitledPane ap_titledpane){
+
+        StringBuilder formatted_ap_str = new StringBuilder();
+
+        // We construct a formatted version of the JSON String
+        for (String key : available_json_keys) {
+            // We print out every key-value pair as a separate "Text" object in the current TitledPane
+            formatted_ap_str.append(key).append(": ").append(json_ap.get(key).toString()).append("\n");
+        }
+        // We add the final string as a singular "Text" object
+        final Text content = new Text(formatted_ap_str.toString());
+        content.setTextAlignment(TextAlignment.LEFT);
+        ap_titledpane.setContent(content);
+    }
+
+    public static String append_device_type(String json_str, boolean deviceType){
+
+        JSONObject jsonObject = stringUtils.convert_string_to_json_obj(json_str);
+        String device_type_str;
+
+        if (deviceType) {
+            device_type_str = Constants.mobile_device_str;
+        }
+        else {
+            device_type_str = Constants.regular_ap_router_str;
+        }
+
+        jsonObject.put(Constants.device_type_key, device_type_str);
+        return jsonObject.toString();
     }
 
 

@@ -3,6 +3,14 @@ package gpsProcessing;
 import java.text.DecimalFormat;
 import java.util.Objects;
 
+/** This Class is intended to be used to parse the raw JSON key-value pairs received from the ESP32 when we request
+ * a GPS position (No internet required, just successful BLE GATT messaging to the ESP32).
+ *
+ * Note: This Class is only designed to be used with GPRMC sentence data, and turn it into more human-readable data
+ * that can be displayed on the GUI.
+ *
+ */
+
 public class gpsParser {
 
     public static String parse_utc_time(String input_str){

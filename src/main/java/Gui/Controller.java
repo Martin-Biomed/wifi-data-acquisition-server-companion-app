@@ -11,25 +11,26 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 import javafx.scene.paint.Color;
 
-import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+
 import org.json.JSONObject;
 import outgoingApiCaller.bleConnection;
 import outgoingApiCaller.wifiScan;
 import outgoingApiCaller.esp32WifiConnection;
 import outgoingApiCaller.gpsCaller;
 import gpsProcessing.gpsGeolocator;
+import gpsProcessing.gpsPCLocator;
 
 import Utils.stringUtils;
-import sun.plugin.javascript.navig4.Anchor;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.util.ArrayList;
 
-// This file contains all the EventHandlers for the JavaFx Application
+// This file contains all the EventHandlers for the Main JavaFx Application
 public class Controller {
 
-    /*
+    /**
     These fields were created and defined in the FXML file. To be able to refer to them in the code, we need to
     declare that they were created inside an FXML file.
     */
@@ -52,6 +53,10 @@ public class Controller {
     // These are objects available in the "Scanned Wi-Fi APs" Tab
     @FXML
     private Accordion wifi_scan_accordion;
+    @FXML
+    private Button wifi_ap_mobile_button_1, wifi_ap_mobile_button_2, wifi_ap_mobile_button_3, wifi_ap_mobile_button_4,
+            wifi_regular_router_button_1, wifi_regular_router_button_2, wifi_regular_router_button_3, wifi_regular_router_button_4,
+            wifi_ap_distance_button_1, wifi_ap_distance_button_2;
 
     // These Objects are related to showing the Internet Connection Status of the Desktop
     @FXML
@@ -83,6 +88,8 @@ public class Controller {
     private TextField esp32_geoapify_textfield;
     @FXML
     private ScrollPane gps_offline_scrollpane;
+    @FXML
+    private TextArea pc_coordinates_textarea;
 
     // Object Instances that are only ever initialised once in the lifecycle of the JAR application
     public static bleConnection applicationBleConnection;
@@ -115,6 +122,7 @@ public class Controller {
         ping_host_button.setDisable(true);
         wifi_router_oem_button.setDisable(true);
         esp_gps_location_button.setDisable(true);
+        esp32_geoapify_button.setDisable(true);
 
     }
 
@@ -126,6 +134,7 @@ public class Controller {
         wifi_conn_execute_button.setDisable(true);
         ping_host_button.setDisable(true);
         esp_gps_location_button.setDisable(true);
+        esp32_geoapify_button.setDisable(true);
 
         // We only send the value if not empty to avoid Null Pointer Exception for a JavaFx Text Field
         applicationBleConnection.set_ble_device_name(device_name_text_field.getText());
@@ -190,7 +199,6 @@ public class Controller {
             ble_conn_confirmation_label.setText("Successful ESP32 Connection");
 
             // This is the processing required to properly display the JSON data
-            //String formatted_wifi_scan_str = wifiScan.format_json_str(applicationWifiScan.get_reply_str());
             String[] array_of_json_aps = stringUtils.split_json_1d_str(applicationWifiScan.get_reply_str());
 
             latest_set_of_scanned_wifi_aps = array_of_json_aps;
@@ -212,17 +220,7 @@ public class Controller {
                 // We will automatically iterate over every available key in the JSON file
                 ArrayList<String> available_json_keys = stringUtils.return_available_json_keys(json_ap);
 
-                StringBuilder formatted_ap_str = new StringBuilder();
-
-                // We construct a formatted version of the JSON String
-                for (String key : available_json_keys) {
-                    // We print out every key-value pair as a separate "Text" object in the current TitledPane
-                    formatted_ap_str.append(key).append(": ").append(json_ap.get(key).toString()).append("\n");
-                }
-                // We add the final string as a singular "Text" object
-                final Text content = new Text(formatted_ap_str.toString());
-                content.setTextAlignment(TextAlignment.LEFT);
-                children.get(i).setContent(content);
+                wifiScan.print_ap_data_to_textArea(available_json_keys, json_ap, children.get(i));
             }
             // This step ensures that we switch to the correct Tab in case of a successful Wi-Fi scan
             main_tab_pane.getSelectionModel().select(wifi_scan_tab);
@@ -230,6 +228,12 @@ public class Controller {
             // We enable the OEM Lookup Button if our scan succeeds and if we have an internet connection
             if (internetConnectionMonitorService.internet_conn == true){
                 wifi_router_oem_button.setDisable(false);
+                wifi_ap_mobile_button_1.setDisable(false);
+                wifi_regular_router_button_1.setDisable(false);
+                wifi_ap_mobile_button_2.setDisable(false);
+                wifi_regular_router_button_2.setDisable(false);
+                wifi_ap_mobile_button_3.setDisable(false);
+                wifi_regular_router_button_3.setDisable(false);
             }
 
             // If this has succeeded then we have Wi-Fi APs available for additional functions
@@ -263,17 +267,7 @@ public class Controller {
                 // We will automatically iterate over every available key in the JSON object
                 ArrayList<String> available_json_keys = stringUtils.return_available_json_keys(json_ap);
 
-                StringBuilder formatted_ap_str = new StringBuilder();
-
-                // We construct a printable version of each JSON key-value pair
-                for (String key : available_json_keys) {
-                    // We print out every key-value pair as a separate "Text" object in the current TitledPane
-                    formatted_ap_str.append(key).append(": ").append(json_ap.get(key).toString()).append("\n");
-                }
-                // We add the final string as a singular "Text" object
-                final Text content = new Text(formatted_ap_str.toString());
-                content.setTextAlignment(TextAlignment.LEFT);
-                children.get(i).setContent(content);
+                wifiScan.print_ap_data_to_textArea(available_json_keys, json_ap, children.get(i));
             }
             else {
                 System.out.println("Failed to add OEM for Wi-Fi AP: " + latest_set_of_scanned_wifi_aps[i]);
@@ -378,6 +372,10 @@ public class Controller {
 
         main_tab_pane.getSelectionModel().select(esp32_gps_tab);
 
+        // We enable the Address Lookup button if our GPS request succeeds and if we have an internet connection
+        if (internetConnectionMonitorService.internet_conn == true) {
+            esp32_geoapify_button.setDisable(false);
+        }
     }
 
     public void click_esp_geoapify_button(MouseEvent event) throws IOException {
@@ -401,7 +399,162 @@ public class Controller {
         AnchorPane.setBottomAnchor(content, 0.0);
         AnchorPane.setRightAnchor(content, 0.0);
         AnchorPane.setLeftAnchor(content, 0.0);
+    }
 
+    public void click_pc_coordinates_button(MouseEvent event) throws MalformedURLException {
+
+        String message;
+
+        if (internetConnectionMonitorService.internet_conn == true){
+            JSONObject pc_coordinates = gpsPCLocator.getComputerCoordinates();
+            float latitude = (float) pc_coordinates.getDouble("lat");
+            float longitude = (float) pc_coordinates.getDouble("lon");
+
+            System.out.println("Retrieved the following coordinates: lat=" + latitude + ", lon=" + longitude);
+
+            message = "The following coordinates were found based on the IP Address of your LAN: \n" +
+                    "Latitude=" + latitude + ", Longitude=" + longitude;
+        }
+        else {
+            message = "The PC is not connected to the internet";
+        }
+
+        // We add the final string as a singular "TextArea" object
+        pc_coordinates_textarea.setText(message);
+        pc_coordinates_textarea.setEditable(false);
+    }
+
+    public void click_wifi_mobile_1_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 0, true);
+    }
+
+    public void click_wifi_regular_router_1_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 0, false);
+    }
+
+    public void click_estimate_wifi_ap1_dist_button(MouseEvent event) throws customException, IOException {
+        distanceCalcGuiUpdates new_set_of_updates = new distanceCalcGuiUpdates();
+        new_set_of_updates.calculate_distances_for_selected_ap(wifi_scan_accordion, 0);
+    }
+
+    public void click_wifi_mobile_2_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 1, true);
+    }
+
+    public void click_wifi_regular_router_2_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 1, false);
+    }
+
+    public void click_estimate_wifi_ap2_dist_button(MouseEvent event) throws customException, IOException {
+        distanceCalcGuiUpdates new_set_of_updates = new distanceCalcGuiUpdates();
+        new_set_of_updates.calculate_distances_for_selected_ap(wifi_scan_accordion, 1);
+    }
+
+    public void click_wifi_mobile_3_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 2, true);
+    }
+
+    public void click_wifi_regular_router_3_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 2, false);
+    }
+
+    public void click_estimate_wifi_ap3_dist_button(MouseEvent event) throws customException, IOException {
+        distanceCalcGuiUpdates new_set_of_updates = new distanceCalcGuiUpdates();
+        new_set_of_updates.calculate_distances_for_selected_ap(wifi_scan_accordion, 2);
+    }
+
+    public void click_wifi_mobile_4_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 3, true);
+    }
+
+    public void click_wifi_regular_router_4_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 3, false);
+    }
+
+    public void click_estimate_wifi_ap4_dist_button(MouseEvent event) throws customException, IOException {
+        distanceCalcGuiUpdates new_set_of_updates = new distanceCalcGuiUpdates();
+        new_set_of_updates.calculate_distances_for_selected_ap(wifi_scan_accordion, 3);
+    }
+
+    public void click_wifi_mobile_5_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 4, true);
+    }
+
+    public void click_wifi_regular_router_5_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 4, false);
+    }
+
+    public void click_estimate_wifi_ap5_dist_button(MouseEvent event) throws customException, IOException {
+        distanceCalcGuiUpdates new_set_of_updates = new distanceCalcGuiUpdates();
+        new_set_of_updates.calculate_distances_for_selected_ap(wifi_scan_accordion, 4);
+    }
+    public void click_wifi_mobile_6_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 5, true);
+    }
+
+    public void click_wifi_regular_router_6_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 5, false);
+    }
+
+    public void click_estimate_wifi_ap6_dist_button(MouseEvent event) throws customException, IOException {
+        distanceCalcGuiUpdates new_set_of_updates = new distanceCalcGuiUpdates();
+        new_set_of_updates.calculate_distances_for_selected_ap(wifi_scan_accordion, 5);
+    }
+
+    public void click_wifi_mobile_7_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 6, true);
+    }
+
+    public void click_wifi_regular_router_7_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 6, false);
+    }
+
+    public void click_estimate_wifi_ap7_dist_button(MouseEvent event) throws customException, IOException {
+        distanceCalcGuiUpdates new_set_of_updates = new distanceCalcGuiUpdates();
+        new_set_of_updates.calculate_distances_for_selected_ap(wifi_scan_accordion, 6);
+    }
+
+    public void click_wifi_mobile_8_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 7, true);
+    }
+
+    public void click_wifi_regular_router_8_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 7, false);
+    }
+
+    public void click_estimate_wifi_ap8_dist_button(MouseEvent event) throws customException, IOException {
+        distanceCalcGuiUpdates new_set_of_updates = new distanceCalcGuiUpdates();
+        new_set_of_updates.calculate_distances_for_selected_ap(wifi_scan_accordion, 7);
+    }
+    public void click_wifi_mobile_9_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 8, true);
+    }
+
+    public void click_wifi_regular_router_9_button(MouseEvent event) throws customException {
+        distanceCalcGuiUpdates.update_wifi_scan_titledpane_with_device(wifi_scan_accordion, applicationWifiScan,
+                latest_set_of_scanned_wifi_aps, 8, false);
+    }
+
+    public void click_estimate_wifi_ap9_dist_button(MouseEvent event) throws customException, IOException {
+        distanceCalcGuiUpdates new_set_of_updates = new distanceCalcGuiUpdates();
+        new_set_of_updates.calculate_distances_for_selected_ap(wifi_scan_accordion, 8);
     }
 
 

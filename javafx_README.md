@@ -38,7 +38,9 @@ for the project so that we can invoke the prepared Scene.
 
 The functionality of the GUI objects is normally defined in a Controller file.
 
-To link the (.fxml) file on Scene Builder to a local Controller file (to star integrating the functionality with the GUI), 
-you need to Select:
+To link the (.fxml) file on Scene Builder to a local Controller file (to start integrating the functionality with the GUI), 
+you need to Select.
 
-Document -> Controller -> Select your local "Controller Class" (Gui.Controller for this project)
+In SceneBuilder, navigate to:
+
+Document (LHS Tab) -> Controller -> Select your local "Controller Class" (Gui.Controller for this project)
