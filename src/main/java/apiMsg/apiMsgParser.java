@@ -4,6 +4,9 @@ import Utils.stringUtils;
 import customExceptions.customException;
 import org.json.JSONObject;
 
+/** This Class was used for initial Wi-Fi Scan Tests prior to GUI Integration, it is no longer relevant for the
+ * finished application but kept due to existing Unit Tests and in case of usefulness. */
+
 public class apiMsgParser {
 
     // This function returns a JSON Object array [1 Object per Wi-Fi AP] based off the response from a "wifi_scan".

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="705.0" xmlns="http://javafx.com/javafx/8.0.311" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Gui.HelpMenu.PingHelpController">
+   <children>
+      <Text layoutX="14.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pinging Hosts on a Network from the ESP32" wrappingWidth="349.994140625">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Text>
+      <Text layoutX="14.0" layoutY="57.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pre-Requisites for Pinging Hosts on a Network">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </Text>
+      <Text layoutX="14.0" layoutY="81.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To scan Wi-Fi Access Points using the ESP32, you must provide the minimum required BLE parameters to connect to the ESP32 that has been loaded with the (wifi-data-acquisition-server) project." wrappingWidth="673.34375" />
+      <Text layoutX="14.0" layoutY="122.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The required parameters include:" wrappingWidth="553.13671875" />
+      <Text layoutX="14.0" layoutY="143.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- The ESP32 BLE Device Name or specific MAC Address" wrappingWidth="414.13671875" />
+      <Text layoutX="14.0" layoutY="160.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- The ESP32 BLE GATT Write and Read Characteristics specific to the (wifi-data-acquisition-server) project." wrappingWidth="569.13671875" />
+      <Text layoutX="14.0" layoutY="185.0" strokeType="OUTSIDE" strokeWidth="0.0" text="A previous (successful) Wi-Fi AP Connection is also required prior to being able to ping hosts." wrappingWidth="673.34375" />
+      <Text layoutX="14.0" layoutY="214.0" strokeType="OUTSIDE" strokeWidth="0.0" text="How a Ping Works">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </Text>
+      <Text layoutX="14.0" layoutY="236.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The ESP32 that is running the (wifi-data-acquisition-server) project uses the credentials which have been stored in a previous Wi-Fi AP connection. When the ESP32 receives a request to ping a certain host, the stored credentials are used to re-establish a connection to the Wi-Fi AP and then to execute an ICMP echo request to the selected host." wrappingWidth="673.34375" />
+      <Text layoutX="14.0" layoutY="295.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The standard information that gets sent to the ESP32 from an ICMP request is then forwarded to this app (via the BLE Client for Windows)." wrappingWidth="662.34375" />
+      <Text layoutX="14.0" layoutY="336.0" strokeType="OUTSIDE" strokeWidth="0.0" text="If the Wi-Fi AP has access to the internet, then a ping request can be forwarded to online URLs (such as google.com)." wrappingWidth="662.34375" />
+   </children>
+</AnchorPane>

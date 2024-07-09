@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="698.0" xmlns="http://javafx.com/javafx/8.0.311" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Gui.HelpMenu.WifiConnController">
+   <children>
+      <Text layoutX="12.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Connecting the ESP32 to a Wi-Fi AP" wrappingWidth="267.994140625">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Text>
+      <Text layoutX="12.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To scan Wi-Fi Access Points using the ESP32, you must provide the minimum required BLE parameters to connect to the ESP32 that has been loaded with the (wifi-data-acquisition-server) project." wrappingWidth="673.34375" />
+      <Text layoutX="12.0" layoutY="58.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pre-Requisites for Connecting the ESP32 to an AP">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </Text>
+      <Text layoutX="12.0" layoutY="124.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The required parameters include:" wrappingWidth="553.13671875" />
+      <Text layoutX="14.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- The ESP32 BLE Device Name or specific MAC Address" wrappingWidth="414.13671875" />
+      <Text layoutX="14.0" layoutY="163.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- The ESP32 BLE GATT Write and Read Characteristics specific to the (wifi-data-acquisition-server) project." wrappingWidth="569.13671875" />
+      <Text layoutX="12.0" layoutY="190.0" strokeType="OUTSIDE" strokeWidth="0.0" text="How a Wi-Fi AP Connection Works">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </Text>
+      <Text layoutX="12.0" layoutY="210.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The ESP32 that is running the (wifi-data-acquisition-server) project cannot maintain a persistent connection to a Wi-Fi Access Point. This is because the ESP32 was configured to run the BLE software stack and the Wi-Fi software stack in the same CPU Core (as they utilise the same hardware stack). This was a conscious design choice to be able to use BLE and Wi-Fi functions during the runtime by toggling when each software stack is initialised and de-initialised." wrappingWidth="673.34375" />
+      <Text layoutX="12.0" layoutY="285.0" strokeType="OUTSIDE" strokeWidth="0.0" text="When the ESP32 receives a request to connect to a Wi-Fi AP, we pass the credentials needed to connect to the DHCP server. A successful Wi-Fi connection is defined by being allocated an IP address on the network of the AP." wrappingWidth="673.34375" />
+      <Text layoutX="13.0" layoutY="330.0" strokeType="OUTSIDE" strokeWidth="0.0" text="After a successful connection, the ESP32 immediately disconnects from the AP, so that the program can run the BLE server. If there's a successful Wi-Fi connection, the AP credentials are stored in ESP32 memory, so that when we execute another function that requires a network connection (like pinging hosts), we do not need to provide AP credentials again." wrappingWidth="673.34375" />
+   </children>
+</AnchorPane>

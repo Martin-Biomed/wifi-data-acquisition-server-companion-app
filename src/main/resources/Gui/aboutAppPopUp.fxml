@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="841.0" prefWidth="721.0" xmlns="http://javafx.com/javafx/8.0.311" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Gui.HelpMenu.PingingHostsController">
+   <children>
+      <Text layoutX="35.0" layoutY="30.0" strokeType="OUTSIDE" strokeWidth="0.0" text="About this App" wrappingWidth="149.962890625">
+         <font>
+            <Font name="System Bold" size="15.0" />
+         </font>
+      </Text>
+      <TextArea editable="false" layoutX="33.0" layoutY="204.0" prefHeight="127.0" prefWidth="668.0" text="This Executable Application does not directly communicate with the ESP32. At the time of this project, the BLE Stack support for Java (on Windows) is very limited. &#10;&#10;Since the ESP32 is using BLE to accept commands, an intermediary application was developed that serves as a general purpose RESTful API server that accepts API messages (on localhost:5900), to configure a message to send over BLE GATT to the selected destination.&#10;&#10;The link to the (BLE_GATT_Client_for_Windows.exe) project page can be found here: &#10;https://github.com/Martin-Biomed/ble_client_for_windows&#10; &#10;To be able to use this Application to communicate with the ESP32, we need to start the BLE GATT Client App in API mode.&#10;" wrapText="true" />
+      <TextArea editable="false" layoutX="33.0" layoutY="368.0" prefHeight="109.0" prefWidth="668.0" text="Wi-Fi AP Scan: The ESP32 will scan the available Wi-Fi Access Points in its surrounding area and record notable data about these APs. &#10;&#10;- Manufacturer/Vendor Lookup: Each Wi-Fi AP that can be detected in the scan has a viewable MAC Address. This application provides additional functionality from the AP data returned from the ESP32 by attempting to find the vendor (based on the MAC Address). This requires an internet connection as it uses an online API (https://api.macvendors.com/).&#10;&#10;- Distance Calculator (ESP32 to Selected AP): We provide an additional function that attempts to estimate possible distances from the ESP32 to a selected Wi-Fi AP. This estimation is based purely on variables like the RSSI and different possible levels of environment attenuation. These estimations are prone to errors since RSSI is affected by different factors and the available attenuation levels are not accurate enough to account for all surroundings. This feature requires no internet.&#10;" wrapText="true" />
+      <Text layoutX="33.0" layoutY="357.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The ESP32 supports the following features:">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Text>
+      <TextArea editable="false" layoutX="33.0" layoutY="488.0" prefHeight="109.0" prefWidth="668.0" text="Wi-Fi AP Connection: This Executable application can command the ESP32 to connect to a selected Wi-Fi AP temporarily. The user must provide the SSID and Password of the AP that they want to connect to in the &quot;ESP32 Wi-Fi AP Connection Details&quot; Tab.&#10;&#10;The connection to the AP is not persistent because the ESP32 takes operates the BLE stack and Wi-Fi stack on the same hardware stack.&#10;&#10;A successful connection to an AP leads to the ESP32 storing the provided SSID and Password when the user wants to execute functions that require a previous connection to an AP (like pinging a host on the network)." wrapText="true" />
+      <Text layoutX="34.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pre-Requisite 1: ESP32 Flashed with (wifi-data-acquisition-server)">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Text>
+      <TextArea editable="false" layoutX="33.0" layoutY="69.0" prefHeight="93.0" prefWidth="668.0" text="This application was developed as a user-friendly interface to control an ESP32 DEV KIT that has been flashed with the (wifi-data-acquisition-server) software.&#10;&#10;The (wifi-data-acquisition-server) project page can be found here: &#10;https://github.com/Martin-Biomed/wifi-data-acquisition-server/tree/master&#10;" wrapText="true" />
+      <Text layoutX="35.0" layoutY="191.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pre-Requisite 2: BLE GATT Client Application (BLE_GATT_Client_for_Windows.exe)">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Text>
+      <TextArea editable="false" layoutX="33.0" layoutY="606.0" prefHeight="80.0" prefWidth="668.0" text="Pinging Hosts in a Network: Once the ESP32 has saved the credentials to connect to a Wi-Fi AP DHCP server, we can submit ICMP echo (ping) requests to selected hosts.&#10;&#10;If using a hostname, the ESP32 will return a resolved IP address for that host (as well as other data related to the ping)." wrapText="true" />
+      <TextArea editable="false" layoutX="33.0" layoutY="698.0" prefHeight="121.0" prefWidth="668.0" text="GPS Location: The ESP32 is supposed to be connected to a NEO-6M GPS module breakout board. This provides the GPS location of the ESP32. &#10;&#10;- Address Location: If the computer that is running this application is connected to the internet, we can resolve the provided GPS coordinates (based on the GPRMC format) to an address. This is done by using the Geoapify Online API (https://api.geoapify.com/v1/geocode/reverse), which requires the user to create an API key and an account. Once the user has received an API key, they can enter it into the relevant field in the &quot;ESP32 GPS Location&quot; Tab.&#10;&#10;- Finding Computer GPS Position: The API that was selected (http://ip-api.com/json/) to attempt to find the GPS coordinates of the computer based on IP address provides inaccurate data. This is because the IP that is used to connect to the wider internet is defined by the Internet Service Provider company, which may have external-facing nodes in different areas than your endpoint device. Recommended not to use.&#10;&#10;- Note: The GPS signal can take a very long time to calibrate on initial ESP32 power on (upwards of 1 hour), and the position tends to fluctuate when the GPS module is in movement." wrapText="true" />
+      <Text layoutX="-19.0" layoutY="424.0" rotate="-90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wi-Fi AP Scan" wrappingWidth="79.40185546875">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Text>
+      <Text layoutX="-35.0" layoutY="546.0" rotate="-90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Wi-Fi AP Connection" wrappingWidth="108.40185546875">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Text>
+      <Text layoutX="-20.0" layoutY="649.0" rotate="-90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pinging Hosts" wrappingWidth="79.40185546875">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Text>
+      <Text layoutX="-19.0" layoutY="756.0" rotate="-90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="GPS Location" wrappingWidth="79.40185546875">
+         <font>
+            <Font name="System Bold" size="11.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="372.0" prefWidth="702.0" xmlns="http://javafx.com/javafx/8.0.311" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Gui.HelpMenu.ScanWifiController">
+   <children>
+      <Text layoutX="20.0" layoutY="38.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Scanning Wi-Fi Access Points using the ESP32">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font></Text>
+      <Text layoutX="20.0" layoutY="90.0" strokeType="OUTSIDE" strokeWidth="0.0" text="To scan Wi-Fi Access Points using the ESP32, you must provide the minimum required BLE parameters to connect to the ESP32 that has been loaded with the (wifi-data-acquisition-server) project." wrappingWidth="673.34375" />
+      <Text layoutX="20.0" layoutY="67.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Pre-Requisites for Scanning">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </Text>
+      <Text layoutX="19.0" layoutY="125.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The required parameters include:" wrappingWidth="553.13671875" />
+      <Text layoutX="18.0" layoutY="144.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- The ESP32 BLE Device Name or specific MAC Address" wrappingWidth="414.13671875" />
+      <Text layoutX="19.0" layoutY="163.0" strokeType="OUTSIDE" strokeWidth="0.0" text="- The ESP32 BLE GATT Write and Read Characteristics specific to the (wifi-data-acquisition-server) project." wrappingWidth="569.13671875" />
+      <Text layoutX="20.0" layoutY="193.0" strokeType="OUTSIDE" strokeWidth="0.0" text="How Scanning Works">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </Text>
+      <Text layoutX="19.0" layoutY="307.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Max Number of APs: The ESP32 has been configured to scan a maximum amount of Wi-Fi APs in the (wifi-data-acquisition-server) project. This means there may be more available Wi-Fi APs in the vicinity of the ESP32, but too many to fit in the maximum number of scans." wrappingWidth="673.3437514901161" />
+      <Text layoutX="19.0" layoutY="214.0" strokeType="OUTSIDE" strokeWidth="0.0" text="At the current release of this application, the ESP32 has been configured to use passive scanning to find information about the surrounding Wi-Fi APs. This means that the ESP32 does not actively send probe requests to DHCP servers during a scan. " wrappingWidth="673.3437514901161" />
+      <Text layoutX="17.0" layoutY="255.0" strokeType="OUTSIDE" strokeWidth="0.0" text="The data acquistion features of the ESP32 are limited to those that are provided by the ESP-IDF default libraries." wrappingWidth="673.3437514901161" />
+      <Text layoutX="20.0" layoutY="284.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Limitations">
+         <font>
+            <Font name="System Bold" size="13.0" />
+         </font>
+      </Text>
+   </children>
+</AnchorPane>

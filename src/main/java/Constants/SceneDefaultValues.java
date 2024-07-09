@@ -17,4 +17,5 @@ public class SceneDefaultValues {
     public final static String default_seq_num_text = "No Sequence Number Value Given";
     public final static String default_ping_time_text = "No Elapsed Time Value Given";
 
+
 }

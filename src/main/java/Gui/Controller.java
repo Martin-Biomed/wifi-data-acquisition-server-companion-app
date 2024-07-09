@@ -1,7 +1,9 @@
 package Gui;
 
+import Gui.HelpMenu.GenericGuiUpdates;
 import customExceptions.customException;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 
 import javafx.fxml.FXML;
@@ -18,6 +20,7 @@ import outgoingApiCaller.bleConnection;
 import outgoingApiCaller.wifiScan;
 import outgoingApiCaller.esp32WifiConnection;
 import outgoingApiCaller.gpsCaller;
+import outgoingApiCaller.pingHost;
 import gpsProcessing.gpsGeolocator;
 import gpsProcessing.gpsPCLocator;
 
@@ -54,9 +57,9 @@ public class Controller {
     @FXML
     private Accordion wifi_scan_accordion;
     @FXML
-    private Button wifi_ap_mobile_button_1, wifi_ap_mobile_button_2, wifi_ap_mobile_button_3, wifi_ap_mobile_button_4,
-            wifi_regular_router_button_1, wifi_regular_router_button_2, wifi_regular_router_button_3, wifi_regular_router_button_4,
-            wifi_ap_distance_button_1, wifi_ap_distance_button_2;
+    private Button wifi_ap_distance_button_1, wifi_ap_distance_button_2, wifi_ap_distance_button_3, wifi_ap_distance_button_4,
+            wifi_ap_distance_button_5, wifi_ap_distance_button_6, wifi_ap_distance_button_7, wifi_ap_distance_button_8,
+            wifi_ap_distance_button_9;
 
     // These Objects are related to showing the Internet Connection Status of the Desktop
     @FXML
@@ -69,6 +72,9 @@ public class Controller {
     private Button wifi_scan_option_button, wifi_conn_execute_button, ping_host_button, wifi_router_oem_button,
             esp_gps_location_button, esp32_geoapify_button;
 
+    @FXML
+    private MenuItem about_app_help_menu_item, ping_hosts_menu_item, wifi_scan_help_menu_item, wifi_connect_help_menu_item;
+
     // These are Objects associated with connecting the ESP32 to a Wi-Fi AP
     @FXML
     private TextField wifi_ssid_text_field, wifi_pwd_text_field;
@@ -79,17 +85,17 @@ public class Controller {
 
     // These are Object associated with the GPS functionality of the ESP32 and Java App
     @FXML
-    private TitledPane esp32_gprmc_data_titledpane;
-    @FXML
-    private SplitPane esp32_gps_splitpane;
-    @FXML
     private AnchorPane offline_gps_pane, online_gps_pane, geoapify_result_anchorpane, gps_offline_scrollpane_anchorpane;
     @FXML
     private TextField esp32_geoapify_textfield;
     @FXML
-    private ScrollPane gps_offline_scrollpane;
-    @FXML
     private TextArea pc_coordinates_textarea;
+
+    // These are Object associated with the Ping Host Functionality of the ESP32 and Java App
+    @FXML
+    private TextField ping_host_text_field;
+    @FXML
+    private Text host_ip_result_text, ping_ttl_text, ping_seq_num_text, ping_time_text;
 
     // Object Instances that are only ever initialised once in the lifecycle of the JAR application
     public static bleConnection applicationBleConnection;
@@ -97,10 +103,15 @@ public class Controller {
     public static esp32WifiConnection applicationEsp32WifiConn;
     public static checkDesktopInternetConnectionService internetConnectionMonitorService;
     public static gpsCaller esp32GpsCaller;
+    public static pingHost latestPingHost;
 
     // This variable is used when determining whether we can lookup Wi-Fi AP manufacturers (only if a scan has occurred)
-    private static boolean scanned_wifi_aps_available = false;
     private static String[] latest_set_of_scanned_wifi_aps;
+    private static boolean scanned_wifi_aps_available = false;
+
+    // These variables are used to indicate that there has been a previous connection between the ESP32 and a Wi-Fi AP
+    private static String last_connected_ap = null;
+    private static boolean connection_to_ap = false;
 
     // This is a special function for the JavaFx Controller class that always executes at the start of the app
     public void initialize(){
@@ -108,6 +119,7 @@ public class Controller {
         applicationWifiScan = new wifiScan();
         applicationEsp32WifiConn = new esp32WifiConnection();
         esp32GpsCaller = new gpsCaller();
+        latestPingHost = new pingHost();
 
         // Start the JavaFx task for monitoring Internet Connectivity
         internetConnectionMonitorService = new checkDesktopInternetConnectionService(
@@ -124,6 +136,15 @@ public class Controller {
         esp_gps_location_button.setDisable(true);
         esp32_geoapify_button.setDisable(true);
 
+        wifi_ap_distance_button_1.setDisable(true);
+        wifi_ap_distance_button_2.setDisable(true);
+        wifi_ap_distance_button_3.setDisable(true);
+        wifi_ap_distance_button_4.setDisable(true);
+        wifi_ap_distance_button_5.setDisable(true);
+        wifi_ap_distance_button_6.setDisable(true);
+        wifi_ap_distance_button_7.setDisable(true);
+        wifi_ap_distance_button_8.setDisable(true);
+        wifi_ap_distance_button_9.setDisable(true);
     }
 
     // We set the BLE Connection static variables in our instance of bleConnection (shared between all BLE functions)
@@ -183,6 +204,16 @@ public class Controller {
 
         applicationWifiScan = Reset.reset_wifi_scan_tab(applicationWifiScan, wifi_scan_accordion);
 
+        wifi_ap_distance_button_1.setDisable(true);
+        wifi_ap_distance_button_2.setDisable(true);
+        wifi_ap_distance_button_3.setDisable(true);
+        wifi_ap_distance_button_4.setDisable(true);
+        wifi_ap_distance_button_5.setDisable(true);
+        wifi_ap_distance_button_6.setDisable(true);
+        wifi_ap_distance_button_7.setDisable(true);
+        wifi_ap_distance_button_8.setDisable(true);
+        wifi_ap_distance_button_9.setDisable(true);
+
         int result = applicationWifiScan.execute_wifi_scan(applicationBleConnection);
 
         if (result != 0){
@@ -228,12 +259,15 @@ public class Controller {
             // We enable the OEM Lookup Button if our scan succeeds and if we have an internet connection
             if (internetConnectionMonitorService.internet_conn == true){
                 wifi_router_oem_button.setDisable(false);
-                wifi_ap_mobile_button_1.setDisable(false);
-                wifi_regular_router_button_1.setDisable(false);
-                wifi_ap_mobile_button_2.setDisable(false);
-                wifi_regular_router_button_2.setDisable(false);
-                wifi_ap_mobile_button_3.setDisable(false);
-                wifi_regular_router_button_3.setDisable(false);
+                wifi_ap_distance_button_1.setDisable(false);
+                wifi_ap_distance_button_2.setDisable(false);
+                wifi_ap_distance_button_3.setDisable(false);
+                wifi_ap_distance_button_4.setDisable(false);
+                wifi_ap_distance_button_5.setDisable(false);
+                wifi_ap_distance_button_6.setDisable(false);
+                wifi_ap_distance_button_7.setDisable(false);
+                wifi_ap_distance_button_8.setDisable(false);
+                wifi_ap_distance_button_9.setDisable(false);
             }
 
             // If this has succeeded then we have Wi-Fi APs available for additional functions
@@ -255,7 +289,7 @@ public class Controller {
                 // We create a separate string that will be modified to include an additional JSON key-value pair
                 // We do not need to use any specific instance of the wifiScan class for these functions.
                 // We choose to use the same instance of wifiScan as the rest of this file for consistency
-                String modified_wifi_ap_str = applicationWifiScan.format_json_str(latest_set_of_scanned_wifi_aps[i]);
+                String modified_wifi_ap_str = wifiScan.format_json_str(latest_set_of_scanned_wifi_aps[i]);
                 modified_wifi_ap_str = applicationWifiScan.append_oem_to_json_string(modified_wifi_ap_str);
                 System.out.println("JSON string has been modified to: " + modified_wifi_ap_str);
 
@@ -281,13 +315,16 @@ public class Controller {
 
         applicationEsp32WifiConn = Reset.reset_wifi_conn_tab(applicationEsp32WifiConn, esp32_ip_addr_text, esp32_subnet_mask_text);
 
-        String SSID = wifi_ssid_text_field.getText().toString();
-        String PWD = wifi_pwd_text_field.getText().toString();
+        String ssid = wifi_ssid_text_field.getText().toString();
+        String pwd = wifi_pwd_text_field.getText().toString();
+
+        last_connected_ap = ssid;
+        connection_to_ap = false;
 
         int result;
 
         // If the user has tried to execute a Wi-Fi AP connection without entering the SSID or PWD fields, its an error
-        if (SSID.isEmpty() || PWD.isEmpty()){
+        if (ssid.isEmpty() || pwd.isEmpty()){
             esp32_wifi_status_circle.setFill(Color.rgb(180, 10, 10));
             wifi_ap_status_text.setText("Error: SSID and/or PWD have not been provided.");
             System.out.println("Error: SSID and/or PWD have not been provided.");
@@ -295,7 +332,7 @@ public class Controller {
             result = -20;
         }
         else {
-            result = applicationEsp32WifiConn.execute_wifi_connection(applicationBleConnection, SSID, PWD);
+            result = applicationEsp32WifiConn.execute_wifi_connection(applicationBleConnection, ssid, pwd);
         }
 
         if (result != 0 && result != -20) {
@@ -325,15 +362,17 @@ public class Controller {
                 }
 
                 if (json_wifi_conn.keySet().contains("wifi_conn_success")){
-                    wifi_ap_status_text.setText("ESP32 can connect to Wi-Fi AP: " + SSID + " [AP Credentials Saved]");
+                    wifi_ap_status_text.setText("ESP32 can connect to Wi-Fi AP: " + ssid + " [AP Credentials Saved]");
                     esp32_wifi_status_circle.setFill(Color.rgb(10, 150, 10));
                     ping_host_button.setDisable(false);
+                    last_connected_ap = ssid;
+                    connection_to_ap = true;
                 }
                 main_tab_pane.getSelectionModel().select(wifi_conn_tab);
             }
             else {
                 esp32_wifi_status_circle.setFill(Color.rgb(180, 10, 10));
-                wifi_ap_status_text.setText("Problem with parsing response from: " + SSID + "(Not JSON)");
+                wifi_ap_status_text.setText("Problem with parsing response from: " + ssid + " (Not JSON)");
             }
         }
     }
@@ -422,6 +461,54 @@ public class Controller {
         // We add the final string as a singular "TextArea" object
         pc_coordinates_textarea.setText(message);
         pc_coordinates_textarea.setEditable(false);
+    }
+
+    public void click_ping_host_button(MouseEvent event) throws customException, IOException {
+        try {
+            if (connection_to_ap){
+                String selected_host = ping_host_text_field.getText();
+                if (selected_host != null) {
+                    int status = latestPingHost.execute_host_ping(applicationBleConnection, selected_host);
+                    // We check if the actual BLE Message from the ESP32 is a valid reply
+                    if (status == 0){
+                        String reply_str = latestPingHost.get_raw_reply_str();
+
+                        // A valid reply from the ESP32 contains data that states whether the Ping was successful or not
+                        int success = latestPingHost.format_json_str(reply_str);
+
+                        if (success == 0){
+                            String host_ip_addr = latestPingHost.get_ip_address();
+                            int ping_ttl = latestPingHost.get_ping_ttl();
+                            int ping_seq_num = latestPingHost.get_ping_seq_num();
+                            int ping_elapsed_time = latestPingHost.get_ping_elapsed_time();
+
+                            System.out.println("Received IP addr: " + host_ip_addr);
+                            System.out.println("Received Ping TTL: " + ping_ttl);
+                            System.out.println("Received Ping Sequence Number: " + ping_seq_num);
+                            System.out.println("Received Ping Elapsed Time: " + ping_elapsed_time);
+
+                            host_ip_result_text.setText(host_ip_addr);
+                            ping_ttl_text.setText(Integer.toString(ping_ttl));
+                            ping_seq_num_text.setText(Integer.toString(ping_seq_num));
+                            ping_time_text.setText(Integer.toString(ping_elapsed_time));
+                        }
+                    }
+                    else {
+                        System.out.println("Error while trying to ping the selected host.");
+                        throw new customException("Error while trying to ping the selected host.");
+                    }
+                }
+            }
+            else {
+                System.out.println("No previous connection to a Wi-Fi AP.");
+                throw new customException("No previous connection to a Wi-Fi AP.");
+            }
+        }
+        catch (Exception e){
+            System.out.println("Error while Pinging Host: " + e.getMessage());
+            throw e;
+        }
+
     }
 
     public void click_wifi_mobile_1_button(MouseEvent event) throws customException {
@@ -555,6 +642,22 @@ public class Controller {
     public void click_estimate_wifi_ap9_dist_button(MouseEvent event) throws customException, IOException {
         distanceCalcGuiUpdates new_set_of_updates = new distanceCalcGuiUpdates();
         new_set_of_updates.calculate_distances_for_selected_ap(wifi_scan_accordion, 8);
+    }
+
+    public void select_about_app_help_menuitem(ActionEvent event) throws IOException {
+        GenericGuiUpdates.load_new_generic_scene("aboutAppPopUp.fxml");
+    }
+
+    public void select_wifi_scan_help_menuitem(ActionEvent event) throws IOException {
+        GenericGuiUpdates.load_new_generic_scene("ScanWifiHelpPopUp.fxml");
+    }
+
+    public void select_wifi_conn_help_menuitem(ActionEvent event) throws IOException {
+        GenericGuiUpdates.load_new_generic_scene("ConnectingToWifiPopUp.fxml");
+    }
+
+    public void select_ping_host_help_menuitem(ActionEvent event) throws IOException {
+        GenericGuiUpdates.load_new_generic_scene("PingHelpPopUp.fxml");
     }
 
 

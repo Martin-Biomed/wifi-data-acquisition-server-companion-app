@@ -19,7 +19,7 @@ public class apiMsgConstructors {
         return obj.toString();
     }
 
-    public String create_ping_msg(String host){
+    public static String create_ping_msg(String host){
         JSONObject obj = new JSONObject();
         obj.put("cmd","ping");
         obj.put("host", host);

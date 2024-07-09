@@ -31,10 +31,10 @@
       <menus>
         <Menu mnemonicParsing="false" text="Help">
                <items>
-                  <MenuItem mnemonicParsing="false" text="Pinging Hosts on a Network" />
-                  <MenuItem mnemonicParsing="false" text="About This App" />
-                  <MenuItem mnemonicParsing="false" text="Scanning Wi-Fi APs" />
-                  <MenuItem mnemonicParsing="false" text="Connecting ESP32 to Wi-Fi AP" />
+                  <MenuItem fx:id="about_app_help_menu_item" mnemonicParsing="false" onAction="#select_about_app_help_menuitem" text="About This App" />
+                  <MenuItem fx:id="wifi_scan_help_menu_item" mnemonicParsing="false" onAction="#select_wifi_scan_help_menuitem" text="Scanning Wi-Fi APs" />
+                  <MenuItem fx:id="wifi_connect_help_menu_item" mnemonicParsing="false" onAction="#select_wifi_conn_help_menuitem" text="Connecting ESP32 to Wi-Fi AP" />
+                  <MenuItem fx:id="ping_hosts_menu_item" mnemonicParsing="false" onAction="#select_ping_host_help_menuitem" text="Pinging Hosts on a Network" />
                </items>
         </Menu>
             <Menu mnemonicParsing="false" text="Reset">
@@ -64,7 +64,7 @@
                         <Insets left="20.0" right="20.0" />
                      </padding></Button>
                   <Button fx:id="wifi_conn_execute_button" layoutX="4.0" layoutY="118.0" mnemonicParsing="false" onMouseClicked="#click_connect_to_ap_button" prefHeight="25.0" prefWidth="192.0" text="Connect to a Wi-Fi AP" />
-                  <Button fx:id="ping_host_button" layoutX="4.0" layoutY="152.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="192.0" text="Ping a Host" />
+                  <Button fx:id="ping_host_button" layoutX="4.0" layoutY="152.0" mnemonicParsing="false" onMouseClicked="#click_ping_host_button" prefHeight="25.0" prefWidth="192.0" text="Ping a Host" />
                   <Button fx:id="configure_ble_conn_button" layoutX="4.0" layoutY="51.0" mnemonicParsing="false" onMouseClicked="#click_configure_ble_button" prefHeight="25.0" prefWidth="192.0" text="Configure BLE Connection" AnchorPane.leftAnchor="4.0">
                      <cursor>
                         <Cursor fx:constant="DEFAULT" />
@@ -379,7 +379,7 @@
                                           <Insets top="-1.5" />
                                        </padding>
                                     </Button>
-                                    <Button fx:id="wifi_ap_distance_button_51" layoutX="564.0" layoutY="348.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#click_estimate_wifi_ap6_dist_button" prefHeight="20.0" prefWidth="188.0" text="Estimate ESP32 distance from Wi-Fi AP ">
+                                    <Button fx:id="wifi_ap_distance_button_6" layoutX="564.0" layoutY="348.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#click_estimate_wifi_ap6_dist_button" prefHeight="20.0" prefWidth="188.0" text="Estimate ESP32 distance from Wi-Fi AP ">
                                        <font>
                                           <Font size="10.0" />
                                        </font>
@@ -405,7 +405,7 @@
                                           <Insets top="-1.5" />
                                        </padding>
                                     </Button>
-                                    <Button fx:id="wifi_ap_distance_button_511" layoutX="562.0" layoutY="411.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#click_estimate_wifi_ap7_dist_button" prefHeight="20.0" prefWidth="188.0" text="Estimate ESP32 distance from Wi-Fi AP ">
+                                    <Button fx:id="wifi_ap_distance_button_7" layoutX="562.0" layoutY="411.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#click_estimate_wifi_ap7_dist_button" prefHeight="20.0" prefWidth="188.0" text="Estimate ESP32 distance from Wi-Fi AP ">
                                        <font>
                                           <Font size="10.0" />
                                        </font>
@@ -431,7 +431,7 @@
                                           <Insets top="-1.5" />
                                        </padding>
                                     </Button>
-                                    <Button fx:id="wifi_ap_distance_button_5111" layoutX="562.0" layoutY="475.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#click_estimate_wifi_ap8_dist_button" prefHeight="20.0" prefWidth="188.0" text="Estimate ESP32 distance from Wi-Fi AP ">
+                                    <Button fx:id="wifi_ap_distance_button_8" layoutX="562.0" layoutY="475.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#click_estimate_wifi_ap8_dist_button" prefHeight="20.0" prefWidth="188.0" text="Estimate ESP32 distance from Wi-Fi AP ">
                                        <font>
                                           <Font size="10.0" />
                                        </font>
@@ -457,7 +457,7 @@
                                           <Insets top="-1.5" />
                                        </padding>
                                     </Button>
-                                    <Button fx:id="wifi_ap_distance_button_51111" layoutX="562.0" layoutY="541.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#click_estimate_wifi_ap9_dist_button" prefHeight="20.0" prefWidth="188.0" text="Estimate ESP32 distance from Wi-Fi AP ">
+                                    <Button fx:id="wifi_ap_distance_button_9" layoutX="562.0" layoutY="541.0" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onMouseClicked="#click_estimate_wifi_ap9_dist_button" prefHeight="20.0" prefWidth="188.0" text="Estimate ESP32 distance from Wi-Fi AP ">
                                        <font>
                                           <Font size="10.0" />
                                        </font>
@@ -545,12 +545,12 @@
                                        </font>
                                     </Label>
                                     <Text fx:id="ping_seq_num_text" layoutX="214.0" layoutY="197.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Sequence Number Value Given" wrappingWidth="184.99998211860657" />
-                                    <Label fx:id="ping_time_label" layoutX="14.0" layoutY="209.0" prefHeight="17.0" prefWidth="172.0" text="ICMP Request Elapsed Time:">
+                                    <Label fx:id="ping_time_label" layoutX="14.0" layoutY="209.0" prefHeight="17.0" prefWidth="192.0" text="ICMP Request Elapsed Time (ms):">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font>
                                     </Label>
-                                    <Text fx:id="ping_time_text" layoutX="180.0" layoutY="222.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Elapsed Time Value Given" wrappingWidth="184.99998211860657" />
+                                    <Text fx:id="ping_time_text" layoutX="214.0" layoutY="223.0" strokeType="OUTSIDE" strokeWidth="0.0" text="No Elapsed Time Value Given" wrappingWidth="184.99998211860657" />
                                  </children></AnchorPane>
                           </content>
                         </Tab>

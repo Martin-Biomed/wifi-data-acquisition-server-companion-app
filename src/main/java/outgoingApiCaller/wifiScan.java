@@ -20,7 +20,7 @@ public class wifiScan {
     private static String latest_formatted_string;
 
     // This function takes an existing instance of a BLE Connection as an input
-    public static int execute_wifi_scan(bleConnection currentBleConnection) throws IOException {
+    public int execute_wifi_scan(bleConnection currentBleConnection) throws IOException {
 
         // We cannot start a Wi-Fi AP scan until all required BLE connection fields have been filled with values
         int result = currentBleConnection.check_mandatory_ble_parameters();
@@ -36,7 +36,7 @@ public class wifiScan {
 
             reply_str = currentBleConnection.send_new_ble_msg_to_esp32(message, currentBleConnection);
 
-            // If the string is not JSON formatted, then it is likely an error message response from the App
+            // If the string is not JSON formatted, then it is likely an error message response from the BLE Client App
             if (!stringUtils.check_valid_json_str(reply_str)){
                 reply_str = reply_str + " (After sending the message)";
                 return -10;
@@ -215,7 +215,7 @@ public class wifiScan {
         return latest_formatted_string;
     }
 
-    public static String append_oem_to_json_string(String input_json_str) throws IOException {
+    public String append_oem_to_json_string(String input_json_str) throws IOException {
 
         JSONObject jsonObject = stringUtils.convert_string_to_json_obj(input_json_str);
 
@@ -255,6 +255,22 @@ public class wifiScan {
 
     }
 
+    public String append_device_type(String json_str, boolean deviceType){
+
+        JSONObject jsonObject = stringUtils.convert_string_to_json_obj(json_str);
+        String device_type_str;
+
+        if (deviceType) {
+            device_type_str = Constants.mobile_device_str;
+        }
+        else {
+            device_type_str = Constants.regular_ap_router_str;
+        }
+
+        jsonObject.put(Constants.device_type_key, device_type_str);
+        return jsonObject.toString();
+    }
+
     public static String get_reply_str(){
         return reply_str;
     }
@@ -272,22 +288,6 @@ public class wifiScan {
         final Text content = new Text(formatted_ap_str.toString());
         content.setTextAlignment(TextAlignment.LEFT);
         ap_titledpane.setContent(content);
-    }
-
-    public static String append_device_type(String json_str, boolean deviceType){
-
-        JSONObject jsonObject = stringUtils.convert_string_to_json_obj(json_str);
-        String device_type_str;
-
-        if (deviceType) {
-            device_type_str = Constants.mobile_device_str;
-        }
-        else {
-            device_type_str = Constants.regular_ap_router_str;
-        }
-
-        jsonObject.put(Constants.device_type_key, device_type_str);
-        return jsonObject.toString();
     }
 
 
