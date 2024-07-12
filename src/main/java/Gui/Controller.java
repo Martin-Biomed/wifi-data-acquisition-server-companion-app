@@ -379,7 +379,7 @@ public class Controller {
 
     public void click_esp_gps_button(MouseEvent event) throws IOException, customException {
 
-        esp32GpsCaller = Reset.reset_esp_gps_tab(esp32GpsCaller);
+        esp32GpsCaller = Reset.reset_esp_gps_tab(esp32GpsCaller, gps_offline_scrollpane_anchorpane);
 
         String gprmc_str = esp32GpsCaller.request_gps_gprmc_data_value(applicationBleConnection);
         JSONObject gprmc_obj = esp32GpsCaller.create_gprmc_json_obj(gprmc_str);
@@ -418,6 +418,8 @@ public class Controller {
     }
 
     public void click_esp_geoapify_button(MouseEvent event) throws IOException {
+
+        Reset.reset_geoapify_section(geoapify_result_anchorpane);
 
         String longitude = esp32GpsCaller.get_longitude();
         String latitude = esp32GpsCaller.get_latitude();
@@ -465,6 +467,10 @@ public class Controller {
 
     public void click_ping_host_button(MouseEvent event) throws customException, IOException {
         try {
+
+            latestPingHost = Reset.reset_ping_tab(latestPingHost,
+                    host_ip_result_text, ping_ttl_text, ping_seq_num_text, ping_time_text);
+
             if (connection_to_ap){
                 String selected_host = ping_host_text_field.getText();
                 if (selected_host != null) {
@@ -658,6 +664,16 @@ public class Controller {
 
     public void select_ping_host_help_menuitem(ActionEvent event) throws IOException {
         GenericGuiUpdates.load_new_generic_scene("PingHelpPopUp.fxml");
+    }
+
+    public void select_reset_all(ActionEvent event){
+
+        applicationWifiScan = Reset.reset_wifi_scan_tab(applicationWifiScan, wifi_scan_accordion);
+        applicationEsp32WifiConn = Reset.reset_wifi_conn_tab(applicationEsp32WifiConn, esp32_ip_addr_text, esp32_subnet_mask_text);
+        esp32GpsCaller = Reset.reset_esp_gps_tab(esp32GpsCaller, gps_offline_scrollpane_anchorpane);
+        Reset.reset_geoapify_section(geoapify_result_anchorpane);
+        latestPingHost = Reset.reset_ping_tab(latestPingHost, host_ip_result_text, ping_ttl_text, ping_seq_num_text, ping_time_text);
+
     }
 
 

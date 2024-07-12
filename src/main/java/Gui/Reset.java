@@ -3,11 +3,14 @@ package Gui;
 import Constants.SceneDefaultValues;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Accordion;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import outgoingApiCaller.esp32WifiConnection;
 import outgoingApiCaller.gpsCaller;
 import outgoingApiCaller.wifiScan;
+import outgoingApiCaller.pingHost;
 
 /** This class can be used to access functions to reset different JavaFx Scene Objects to a known State */
 
@@ -45,16 +48,40 @@ public class Reset {
         return currentWifiConnection;
     }
 
-    public static gpsCaller reset_esp_gps_tab(gpsCaller currentGpsCaller){
+    public static gpsCaller reset_esp_gps_tab(gpsCaller currentGpsCaller, AnchorPane section_AnchorPane){
 
         System.out.println("Resetting the ESP32 GPS Tab");
 
         // We re-initialise the instance of the class (and all its variables)
         currentGpsCaller = new gpsCaller();
 
-        return currentGpsCaller;
+        // We re-initialise the contents of the AnchorPane related to the raw ESP32 GPS location
+        section_AnchorPane.getChildren().clear();
 
+        return currentGpsCaller;
     }
 
+    public static pingHost reset_ping_tab(pingHost currentPingHostObj,
+                                          Text host_ip_text, Text ttl_text, Text seq_num_text, Text time_text){
+
+        System.out.println("Resetting the Ping Host Tab");
+
+        host_ip_text.setText(SceneDefaultValues.default_host_ip_result_text);
+        ttl_text.setText(SceneDefaultValues.default_ping_ttl_text);
+        seq_num_text.setText(SceneDefaultValues.default_seq_num_text);
+        time_text.setText(SceneDefaultValues.default_ping_time_text);
+
+        currentPingHostObj = new pingHost();
+
+        return currentPingHostObj;
+    }
+
+    public static void reset_geoapify_section(AnchorPane section_AnchorPane){
+
+        System.out.println("Resetting the GPS Geoapify Section");
+
+        // We re-initialise the contents of the AnchorPane related to the result of the API call parsing
+        section_AnchorPane.getChildren().clear();
+    }
 
 }

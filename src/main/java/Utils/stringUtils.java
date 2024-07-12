@@ -97,22 +97,33 @@ public class stringUtils {
 
     public static JSONObject convert_multiline_string_to_json_obj(String input_string){
 
-        JSONObject jsonObject = new JSONObject();
-        if (!input_string.contains("\n")){
-            System.out.println("Input String is not composed of multiple lines.");
-            return jsonObject;
+        JSONObject jsonObject = null;
+
+        try {
+            jsonObject = new JSONObject();
+            if (!input_string.contains("\n")){
+                System.out.println("Input String is not composed of multiple lines.");
+                return jsonObject;
+            }
+
+            // Each line in the string has form: "key: value"
+            String[] lines = input_string.split("\n");
+            System.out.println("Starting the process of splitting the String (Before Converting to JSON)");
+
+            for (String line : lines){
+
+                String[] key_value_str = line.split(": ");
+
+                // Some fields in a JSON string may not meet the expected form (example: blank values)
+                if (key_value_str.length > 1){
+                    System.out.println("The following parts have been separated: " + key_value_str[0] + "," + key_value_str[1]);
+                    jsonObject.put(key_value_str[0], key_value_str[1]);
+                }
+            }
         }
-
-        // Each line in the string has form: "key: value"
-        String[] lines = input_string.split("\n");
-        System.out.println("Starting the process of splitting the String (Before Converting to JSON)");
-
-        for (String line : lines){
-            String[] key_value_str = line.split(": ");
-            System.out.println("The following parts have been separated: " + key_value_str[0] + "," + key_value_str[1]);
-            jsonObject.put(key_value_str[0], key_value_str[1]);
+        catch (Exception e){
+            System.out.println("Error while trying to convert string to JSON Object: " + e.getMessage());
         }
-
         return jsonObject;
     }
 
