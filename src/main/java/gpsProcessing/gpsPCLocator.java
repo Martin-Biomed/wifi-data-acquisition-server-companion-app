@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static Gui.Main.logger;
+
 /** This Class is intended to be used to try to determine the Coordinates of the PC running this application
  * based on the IP address allocated by the ISP.
  *
@@ -23,16 +25,16 @@ public class gpsPCLocator {
         String pc_gps_api_url = Constants.ip_to_coordinates_api_url;
 
         URL url = new URL(pc_gps_api_url);
-        System.out.println("Attempting to send request to API: " + pc_gps_api_url);
+        logger.info("Attempting to send request to API: " + pc_gps_api_url);
 
         try {
             String json_str = httpUtils.generic_http_request(url, "GET");
-            System.out.println("Received the following response from the API: " + json_str);
+            logger.info("Received the following response from the API: " + json_str);
             JSONObject json_obj = new JSONObject(json_str);
             return json_obj;
 
         } catch (IOException e) {
-            System.out.println("Error retrieving PC Coordinates: " + e.toString());
+            logger.error("Error retrieving PC Coordinates: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
+import static Gui.Main.logger;
+
 // This file contains all the EventHandlers for the Main JavaFx Application
 public class Controller {
 
@@ -159,35 +161,35 @@ public class Controller {
 
         // We only send the value if not empty to avoid Null Pointer Exception for a JavaFx Text Field
         applicationBleConnection.set_ble_device_name(device_name_text_field.getText());
-        System.out.println("Adding Device Name: " + device_name_text_field.getText());
+        logger.info("Adding Device Name: " + device_name_text_field.getText());
 
         applicationBleConnection.set_macAddress(device_addr_text_field.getText());
-        System.out.println("Adding Device Address: " + device_addr_text_field.getText());
+        logger.info("Adding Device Address: " + device_addr_text_field.getText());
 
         applicationBleConnection.set_device_read_uuid(device_ble_gatt_read_text_field.getText());
-        System.out.println("Adding Device GATT Read UUID: " + device_ble_gatt_read_text_field.getText());
+        logger.info("Adding Device GATT Read UUID: " + device_ble_gatt_read_text_field.getText());
 
         applicationBleConnection.set_device_write_uuid(device_ble_gatt_write_text_field.getText());
-        System.out.println("Adding Device GATT Write UUID: " + device_ble_gatt_write_text_field.getText());
+        logger.info("Adding Device GATT Write UUID: " + device_ble_gatt_write_text_field.getText());
 
         int valid_status = applicationBleConnection.check_mandatory_ble_parameters();
-        System.out.println("Valid Status Value: " + valid_status);
+        logger.info("BLE Parameters Valid State: " + valid_status);
 
         switch(valid_status){
             case -1:
-                System.out.println("BLE Device Name or MAC Address not provided.");
+                logger.error("BLE Device Name or MAC Address not provided.");
                 ble_conn_confirmation_label.setText("BLE Device Name or MAC Address not provided.");
                 break;
             case -2:
-                System.out.println("BLE Device GATT Read UUID not provided.");
+                logger.error("BLE Device GATT Read UUID not provided.");
                 ble_conn_confirmation_label.setText("BLE Device GATT Read UUID not provided.");
                 break;
             case -3:
-                System.out.println("BLE Device GATT Write UUID not provided.");
+                logger.error("BLE Device GATT Write UUID not provided.");
                 ble_conn_confirmation_label.setText("BLE Device GATT Write UUID not provided.");
                 break;
             default:
-                System.out.println("BLE Connection Parameters Successfully Updated.");
+                logger.info("BLE Connection Parameters Successfully Updated.");
                 ble_conn_confirmation_label.setText("BLE Connection Parameters Successfully Updated.");
                 // We re-enable the Buttons which are dependent on successfully setting up the BLE Connection first
                 wifi_scan_option_button.setDisable(false);
@@ -220,7 +222,7 @@ public class Controller {
             // These error messages are displayed in the "BLE Connection Details" Tab
             esp32_conn_status_circle.setFill(Color.rgb(180, 10, 10));
             ble_conn_confirmation_label.setText("Error Detected: [" + applicationWifiScan.get_reply_str() + "]");
-            System.out.println("Error Detected: [" + applicationWifiScan.get_reply_str() + "]");
+            logger.error("Error Detected: [" + applicationWifiScan.get_reply_str() + "]");
             // This step ensures that we switch to the BLE Connection Tab which shows the error message from the API call
             main_tab_pane.getSelectionModel().select(ble_conn_tab);
         }
@@ -291,7 +293,7 @@ public class Controller {
                 // We choose to use the same instance of wifiScan as the rest of this file for consistency
                 String modified_wifi_ap_str = wifiScan.format_json_str(latest_set_of_scanned_wifi_aps[i]);
                 modified_wifi_ap_str = applicationWifiScan.append_oem_to_json_string(modified_wifi_ap_str);
-                System.out.println("JSON string has been modified to: " + modified_wifi_ap_str);
+                logger.info("JSON string has been modified to: " + modified_wifi_ap_str);
 
                 // We use the JSON properties of the string to extract the SSID of the AP [added as Text]
                 String formatted_wifi_scan_str = wifiScan.format_json_str(modified_wifi_ap_str);
@@ -304,7 +306,7 @@ public class Controller {
                 wifiScan.print_ap_data_to_textArea(available_json_keys, json_ap, children.get(i));
             }
             else {
-                System.out.println("Failed to add OEM for Wi-Fi AP: " + latest_set_of_scanned_wifi_aps[i]);
+                logger.info("Failed to add OEM for Wi-Fi AP: " + latest_set_of_scanned_wifi_aps[i]);
             }
             // This step ensures that we switch to the correct Tab in case of a successful Wi-Fi scan
             main_tab_pane.getSelectionModel().select(wifi_scan_tab);
@@ -327,7 +329,7 @@ public class Controller {
         if (ssid.isEmpty() || pwd.isEmpty()){
             esp32_wifi_status_circle.setFill(Color.rgb(180, 10, 10));
             wifi_ap_status_text.setText("Error: SSID and/or PWD have not been provided.");
-            System.out.println("Error: SSID and/or PWD have not been provided.");
+            logger.error("Error: SSID and/or PWD have not been provided.");
             main_tab_pane.getSelectionModel().select(wifi_conn_tab);
             result = -20;
         }
@@ -339,7 +341,7 @@ public class Controller {
             // These error messages are displayed in the "Wi-Fi AP Connection Details" Tab
             esp32_wifi_status_circle.setFill(Color.rgb(180, 10, 10));
             wifi_ap_status_text.setText("Error Detected: [" + applicationEsp32WifiConn.get_reply_str() + "]");
-            System.out.println("Error Detected: [" + applicationEsp32WifiConn.get_reply_str() + "]");
+            logger.error("Error Detected: [" + applicationEsp32WifiConn.get_reply_str() + "]");
             // Ensures that we switch to the Wi-Fi Connection Details Tab which shows the error message from the API call
             main_tab_pane.getSelectionModel().select(wifi_conn_tab);
         }
@@ -384,7 +386,7 @@ public class Controller {
         String gprmc_str = esp32GpsCaller.request_gps_gprmc_data_value(applicationBleConnection);
         JSONObject gprmc_obj = esp32GpsCaller.create_gprmc_json_obj(gprmc_str);
 
-        System.out.println("Parsed GPS Object: " + gprmc_obj.toString());
+        logger.info("Parsed GPS Object: " + gprmc_obj.toString());
         String formatted_gprmc_str = "Raw GPRMC Sentence: \n " + gprmc_str + "\n\n";
 
         // We will automatically iterate over every available key in the JSON object
@@ -429,7 +431,7 @@ public class Controller {
         String api_response = gpsGeolocator.send_geoapify_api_request(latitude, longitude, api_key);
 
         String address = gpsGeolocator.parse_geoapify_api_response(api_response);
-        System.out.println("Coordinates point to the following address: " + address);
+        logger.info("Coordinates point to the following address: " + address);
 
         // We add the final string as a singular "TextArea" object
         final TextArea content = new TextArea("Found Address: " + address);
@@ -451,7 +453,7 @@ public class Controller {
             float latitude = (float) pc_coordinates.getDouble("lat");
             float longitude = (float) pc_coordinates.getDouble("lon");
 
-            System.out.println("Retrieved the following coordinates: lat=" + latitude + ", lon=" + longitude);
+            logger.info("Retrieved the following coordinates: lat=" + latitude + ", lon=" + longitude);
 
             message = "The following coordinates were found based on the IP Address of your LAN: \n" +
                     "Latitude=" + latitude + ", Longitude=" + longitude;
@@ -488,10 +490,10 @@ public class Controller {
                             int ping_seq_num = latestPingHost.get_ping_seq_num();
                             int ping_elapsed_time = latestPingHost.get_ping_elapsed_time();
 
-                            System.out.println("Received IP addr: " + host_ip_addr);
-                            System.out.println("Received Ping TTL: " + ping_ttl);
-                            System.out.println("Received Ping Sequence Number: " + ping_seq_num);
-                            System.out.println("Received Ping Elapsed Time: " + ping_elapsed_time);
+                            logger.info("Received IP addr: " + host_ip_addr);
+                            logger.info("Received Ping TTL: " + ping_ttl);
+                            logger.info("Received Ping Sequence Number: " + ping_seq_num);
+                            logger.info("Received Ping Elapsed Time: " + ping_elapsed_time);
 
                             host_ip_result_text.setText(host_ip_addr);
                             ping_ttl_text.setText(Integer.toString(ping_ttl));
@@ -500,18 +502,18 @@ public class Controller {
                         }
                     }
                     else {
-                        System.out.println("Error while trying to ping the selected host.");
+                        logger.error("Error while trying to ping the selected host.");
                         throw new customException("Error while trying to ping the selected host.");
                     }
                 }
             }
             else {
-                System.out.println("No previous connection to a Wi-Fi AP.");
+                logger.error("No previous connection to a Wi-Fi AP.");
                 throw new customException("No previous connection to a Wi-Fi AP.");
             }
         }
         catch (Exception e){
-            System.out.println("Error while Pinging Host: " + e.getMessage());
+            logger.error("Error while Pinging Host: " + e.getMessage());
             throw e;
         }
 

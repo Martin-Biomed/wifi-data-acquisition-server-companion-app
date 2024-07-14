@@ -7,6 +7,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Text;
 
+import static Gui.Main.logger;
+
 // This is a parallel JavaFx Task that executes in parallel with the main GUI Task
 // It periodically checks if this JAR Application has access to the internet
 
@@ -39,7 +41,7 @@ public class checkDesktopInternetConnectionService extends ScheduledService<Void
                     update_javafx_shapes(wifi_conn_status);
                 }
                 catch (Exception e){
-                    System.out.println(e.toString());
+                    logger.error(e.getMessage());
                 }
                 return null;
             }
@@ -57,7 +59,7 @@ public class checkDesktopInternetConnectionService extends ScheduledService<Void
             return true;
         }
         else {
-            System.out.println("Internet Not Connected (unable to ping google.com)");
+            logger.error("Internet Not Connected (unable to ping google.com)");
             internet_conn = false;
             return false;
         }

@@ -7,6 +7,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Objects;
 
+import static Gui.Main.logger;
+
 public class pingHost {
 
     private String raw_reply_str;
@@ -50,7 +52,7 @@ public class pingHost {
     // the "Ping Details" Tab
     public int format_json_str(String input_str) {
 
-        System.out.println("About to Process the following string: " + input_str);
+        logger.info("About to Process the following string: " + input_str);
         JSONObject jsonObject = stringUtils.convert_string_to_json_obj(input_str);
 
         // We will replace the existing key-value pairs with the properly formatted key-value pairs
@@ -137,7 +139,6 @@ public class pingHost {
     public int get_ping_elapsed_time(){
         return ping_elapsed_time;
     }
-
 
 
 }

@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static Gui.Main.logger;
+
 public class gpsCaller {
 
     private static String reply_str;
@@ -55,7 +57,7 @@ public class gpsCaller {
         JSONObject jsonObject = stringUtils.convert_string_to_json_obj(input_str);
 
         String key_of_interest = "gps_position";
-        System.out.println("Attempting to extract the value of key: " + key_of_interest);
+        logger.info("Attempting to extract the value of key: " + key_of_interest);
         // We extract the raw "gps_position" data that we can then parse into useful GPS formatted data
         if (jsonObject.keySet().contains(key_of_interest)){
             //System.out.println("Returning string: " + jsonObject.get("gps_position").toString());
@@ -80,13 +82,13 @@ public class gpsCaller {
             Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
             Matcher matcher = pattern.matcher(message);
 
-            System.out.println("Attempting to find matching substrings in String: \n" + message);
+            logger.info("Attempting to find matching substrings in String: \n" + message);
 
             // Print out all the substrings that were found (that fit the regex)
             // Note: Only the final String matching the pattern is returned from this function
             while (matcher.find()) {
                 return_str = matcher.group().toString();
-                System.out.println("Found matching line: " + return_str);
+                logger.info("Found matching line: " + return_str);
             }
             return return_str;
         }
@@ -108,7 +110,7 @@ public class gpsCaller {
 
         // We choose to extract a line of GPRMC data from the raw GPS data value
         String gprmc_str = extract_gprmc_data_from_msg(unformatted_gps_data);
-        System.out.println("Received GPRMC datapoint: " + gprmc_str);
+        logger.info("Received GPRMC datapoint: " + gprmc_str);
 
         return gprmc_str;
     }

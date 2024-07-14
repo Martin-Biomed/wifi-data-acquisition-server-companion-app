@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.URL;
 
+import static Gui.Main.logger;
+
 /** This Class is intended to be used to try to determine the address of where the ESP32 has been deployed based on the
  * GPS numerical coordinates returned from the ESP32.
  *
@@ -23,10 +25,10 @@ public class gpsGeolocator {
         String url_str = Constants.geoapify_reverse_geocoding_url + "?lat=" + latitude + "&lon=" + longitude
                         + "&apiKey=" + api_key;
 
-        System.out.println("Sending API Call to Geoapify: " + url_str);
+        logger.info("Sending API Call to Geoapify: " + url_str);
         URL api_url = new URL(url_str);
         String response = httpUtils.generic_http_request(api_url, "GET");
-        System.out.println("Received the following response from Geoapify: " + response);
+        logger.info("Received the following response from Geoapify: " + response);
 
         return response;
     }
@@ -36,13 +38,13 @@ public class gpsGeolocator {
         // The response from the API is given as a JSON object
         JSONObject geoapify_obj = new JSONObject(init_str);
 
-        System.out.println("Attempting to extract JSON Array from initial string");
+        logger.info("Attempting to extract JSON Array from initial string");
 
         // The address is given as JSON key-value pair in the "features" JSON Array
         JSONArray features = (JSONArray) geoapify_obj.get("features");
 
-        System.out.println("Features JSON Array: " + features.toString());
-        System.out.println("There are " + features.length() + " JSON Objects in the Array.");
+        logger.info("Features JSON Array: " + features.toString());
+        logger.info("There are " + features.length() + " JSON Objects in the Array.");
 
         String return_str = "Problem while parsing Geoapify API response";
 
@@ -51,23 +53,23 @@ public class gpsGeolocator {
         {
             JSONObject current_json_obj = features.getJSONObject(i);
 
-            System.out.println("Iterating over JSON Object: " + current_json_obj.toString());
+            logger.info("Iterating over JSON Object: " + current_json_obj.toString());
 
             // We print the available keys for this JSON object
             for (String key : current_json_obj.keySet()){
-                System.out.println("Key available for JSON Object: " + key);
+                logger.info("Key available for JSON Object: " + key);
             }
 
             // The string that we care about is the content matching the "formatted" key
             if (current_json_obj.has("properties")) {
 
-                System.out.println("Searching the properties JSON Object given by Geoapify API reply.");
+                logger.info("Searching the properties JSON Object given by Geoapify API reply.");
 
                 // The nested "properties" JSON Object has a set of JSON key-value pairs, we need to search for the
                 // correct key (formatted) in this JSON object.
                 JSONObject properties_obj = current_json_obj.getJSONObject("properties");
 
-                System.out.println("Found required data in JSON Object: " + properties_obj.get("formatted").toString());
+                logger.info("Found required data in JSON Object: " + properties_obj.get("formatted").toString());
                 return_str = properties_obj.get("formatted").toString();
             }
         }

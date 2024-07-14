@@ -12,6 +12,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static Gui.Main.logger;
+
 public class wifiScan {
 
     private static String reply_str;
@@ -225,7 +227,7 @@ public class wifiScan {
            // We append the OEM as a new key-value pari in the JSON Object
            try{
                String oem_manufacturer = macManufacturerLookup.get_vendor_from_mac(mac_address);
-               System.out.println("Adding OEM to the JSON object: " + oem_manufacturer);
+               logger.info("Adding OEM to the JSON object: " + oem_manufacturer);
 
                // If the reply from the previous function is JSON-formatted, it is almost certainly an error message
                if (stringUtils.check_valid_json_str(oem_manufacturer)){
@@ -241,7 +243,7 @@ public class wifiScan {
                return input_json_str;
            }
            catch (IOException e){
-               System.out.println("Error Detected while trying to find OEM: " + e.toString());
+               logger.error("Error Detected while trying to find OEM: " + e.toString());
                return e.toString();
            }
            catch (InterruptedException e) {
@@ -249,7 +251,7 @@ public class wifiScan {
            }
         }
         else{
-            System.out.println("JSON Object does not have key (MAC Address)");
+            logger.error("JSON Object does not have key (MAC Address)");
             return "JSON Object does not have key (MAC Address)";
         }
 

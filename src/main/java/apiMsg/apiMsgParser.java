@@ -4,6 +4,8 @@ import Utils.stringUtils;
 import customExceptions.customException;
 import org.json.JSONObject;
 
+import static Gui.Main.logger;
+
 /** This Class was used for initial Wi-Fi Scan Tests prior to GUI Integration, it is no longer relevant for the
  * finished application but kept due to existing Unit Tests and in case of usefulness. */
 
@@ -24,16 +26,16 @@ public class apiMsgParser {
         }
 
         JSONObject[] json_obj_arr = new JSONObject[arrayLength];
-        System.out.println("There are " + arrayLength + " Wi-Fi APs detected.");
+        logger.info("There are " + arrayLength + " Wi-Fi APs detected.");
 
-        System.out.println("The array has the following JSON Objects:");
+        logger.info("The array has the following JSON Objects:");
         for (int i = 0; i < arrayLength; i++) {
             JSONObject jsonObject = stringUtils.convert_string_to_json_obj(split_string[i]);
             //System.out.println(split_string[i]);
             //System.out.println("Extracting the available keys for this JSON object... ");
             //ArrayList<String> jsonObject_keys = stringUtils.return_available_json_keys(jsonObject);
             json_obj_arr[i] = jsonObject;
-            System.out.println("Adding new item to JSON Object Array: " + json_obj_arr[i]);
+            logger.info("Adding new item to JSON Object Array: " + json_obj_arr[i]);
         }
         return json_obj_arr;
     }

@@ -10,6 +10,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
+import static Gui.Main.logger;
+
 public class httpUtils {
 
     // We make this a separate static variable such that the value is not lost if it fails the try-catch condition
@@ -67,9 +69,14 @@ public class httpUtils {
             // If the HTTP request has failed, then we return the "failure" message string defined in the
             // (BLE_GATT_Client_for_Windows.exe) application
             else {
+                // Print statements kept to avoid affecting the unit tests
                 System.out.println("HTTP Request Failed with Code: " + response_code);
                 System.out.println("HTTP Content Type: " + contentType);
                 System.out.println("HTTP User Agent: " + userAgent);
+
+                logger.error("HTTP Request Failed with Code: " + response_code);
+                logger.info("HTTP Content Type: " + contentType);
+                logger.info("HTTP User Agent: " + userAgent);
                 // Sets up a char input stream from the raw byte stream (specifically Error Byte Stream) received from the API call.
                 BufferedReader stream_reader = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
 
@@ -86,9 +93,13 @@ public class httpUtils {
         } catch (IOException e) {
             // This error can be thrown by a number of situations (handled entirely by the Java app).
             // Situations include, wrong input type provided as macAddress, or an inability to make external queries
+
+            // Print statements kept to avoid affecting the unit tests
             System.out.println("Error Detected (generic_http_request): " + e.toString());
-            //String error_str = raw_reply_content + " (Error Code: " + response_code + ")";
             System.out.println("Returning Error Message: " + e.toString());
+
+            logger.error("Error Detected (generic_http_request): " + e.toString());
+            logger.error("Returning Error Message: " + e.toString());
             return e.toString();
         }
     }

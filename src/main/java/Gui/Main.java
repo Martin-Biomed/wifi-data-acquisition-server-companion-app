@@ -8,10 +8,15 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
 
 public class Main extends Application {
 
     private static ArrayList<Stage> childStages = new ArrayList<>();
+
+    // Since the (log4j2.yaml) file is in the resources, the program automatically finds the config for the Logging
+    public static final Logger logger = LogManager.getLogger(Main.class);
 
     @Override
     public void start(Stage stage) throws IOException {

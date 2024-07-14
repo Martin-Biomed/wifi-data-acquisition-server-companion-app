@@ -1,0 +1,26 @@
+Configuration:
+  status: info
+  Appenders:
+
+    # We automatically log the session to a File (which is overwritten the next time the App restarts)
+    File:
+      name: LogToFile
+      # This fileName defines the filename of the latest logfile that corresponds to the latest execution of the App
+      fileName: C:\wifi_data_acquisition_companion_app\latest_log.log
+      append: false
+      PatternLayout:
+        pattern: "%d{HH:mm:ss.SSS} %-5level - %msg%n"
+
+    # We also want to log to the Console (it's beneficial during development)
+    Console:
+      name: LogToConsole
+      target: SYSTEM_OUT
+      PatternLayout:
+        pattern: "%d{HH:mm:ss.SSS} %-5level - %msg%n"
+
+  Loggers:
+    Root:
+      level: info
+      AppenderRef:
+        - ref: LogToFile
+        - ref: LogToConsole

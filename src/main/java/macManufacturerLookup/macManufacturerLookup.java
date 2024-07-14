@@ -8,6 +8,8 @@ import Utils.httpUtils;
 
 import Constants.Constants;
 
+import static Gui.Main.logger;
+
 /** This Class is intended to be used to try to determine the Equipment Manufacturer of a Wi-Fi AP
  * based on the detected MAC Address.
  *
@@ -25,7 +27,7 @@ public class macManufacturerLookup {
             // We define the URL to send an HTTP GET Request
             String baseURL = Constants.MAC_OEM_Lookup_baseURL;
             URL url = new URL(baseURL + macAddress);
-            System.out.println("Sending HTTP Request to: " + baseURL + macAddress);
+            logger.error("Sending HTTP Request to: " + baseURL + macAddress);
 
             // Opening the connection to the online API URL
             String response = httpUtils.generic_http_request(url, "GET");
@@ -34,7 +36,7 @@ public class macManufacturerLookup {
         } catch (IOException e){
             // This error can be thrown by a number of situations.
             // Situations include, wrong input type provided as macAddress, or an inability to make external queries
-            System.out.println("Error Detected: " + e.toString());
+            logger.error("Error Detected: " + e.getMessage());
             throw new RuntimeException(e);
         }
     }

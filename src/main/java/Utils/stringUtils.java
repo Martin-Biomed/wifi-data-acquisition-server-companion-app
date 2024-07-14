@@ -10,6 +10,8 @@ import java.util.ArrayList;
 
 import customExceptions.customException;
 
+import static Gui.Main.logger;
+
 public class stringUtils {
 
     // Checks if the provided string is JSON formatted
@@ -45,31 +47,24 @@ public class stringUtils {
         try {
             // The manually-thrown Exceptions will trigger the creation and return of an empty array of Strings
             if (check_if_json_arr(init_string)){
-                System.out.println("Custom Exception has been triggered");
+                logger.error("Custom Exception has been triggered");
                 throw new customException("Input string " + init_string + " is a JSON Array (not compatible with this func)");
             }
             else if (!check_valid_json_str(init_string)){
-                System.out.println("Custom Exception has been triggered");
+                logger.error("Custom Exception has been triggered");
                 throw new customException("Input string " + init_string + " is not JSON formatted.");
             }
             else {
                 // We split the strings based on the "}" at the end of a JSON 1D Object
                 String[] split_string = init_string.split("((?<=}))");
                 int arrayLength = split_string.length;
-                System.out.println("Array has " + arrayLength + " terms.");
-
-                /*
-                System.out.println("The array has the following Sub-Strings:");
-                for (String s : split_string) {
-                    System.out.println(s);
-                }
-                */
+                logger.info("Array has " + arrayLength + " terms.");
 
                 return split_string;
             }
         } catch (Exception e){
             // If an exception is triggered, then we return an empty array of Strings
-            System.out.println("Caught the Custom Exception");
+            logger.error("Caught the Custom Exception" + e.getMessage());
             return new String[0];
         }
     }
@@ -89,7 +84,7 @@ public class stringUtils {
 
         while(json_keys.hasNext()){
             String next_key = json_keys.next();
-            System.out.println("Adding the following key to array: " + next_key);
+            //logger.info("Adding the following key to array: " + next_key);
             array_of_keys.add(next_key);
         }
         return array_of_keys;
@@ -102,13 +97,13 @@ public class stringUtils {
         try {
             jsonObject = new JSONObject();
             if (!input_string.contains("\n")){
-                System.out.println("Input String is not composed of multiple lines.");
+                logger.error("Input String is not composed of multiple lines.");
                 return jsonObject;
             }
 
             // Each line in the string has form: "key: value"
             String[] lines = input_string.split("\n");
-            System.out.println("Starting the process of splitting the String (Before Converting to JSON)");
+            logger.info("Starting the process of splitting the String (Before Converting to JSON)");
 
             for (String line : lines){
 
@@ -116,13 +111,13 @@ public class stringUtils {
 
                 // Some fields in a JSON string may not meet the expected form (example: blank values)
                 if (key_value_str.length > 1){
-                    System.out.println("The following parts have been separated: " + key_value_str[0] + "," + key_value_str[1]);
+                    logger.info("The following parts have been separated: " + key_value_str[0] + "," + key_value_str[1]);
                     jsonObject.put(key_value_str[0], key_value_str[1]);
                 }
             }
         }
         catch (Exception e){
-            System.out.println("Error while trying to convert string to JSON Object: " + e.getMessage());
+            logger.error("Error while trying to convert string to JSON Object: " + e.getMessage());
         }
         return jsonObject;
     }

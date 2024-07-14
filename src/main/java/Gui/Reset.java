@@ -12,13 +12,15 @@ import outgoingApiCaller.gpsCaller;
 import outgoingApiCaller.wifiScan;
 import outgoingApiCaller.pingHost;
 
+import static Gui.Main.logger;
+
 /** This class can be used to access functions to reset different JavaFx Scene Objects to a known State */
 
 public class Reset {
 
     public static wifiScan reset_wifi_scan_tab(wifiScan currentWifiScan, Accordion wifi_scan_accordion){
 
-        System.out.println("Resetting the Wi-Fi Scan Tab");
+        logger.info("Resetting the Wi-Fi Scan Tab");
 
         // We re-initialise the instance of the class (and all its variables)
         currentWifiScan = new wifiScan();
@@ -37,7 +39,7 @@ public class Reset {
 
     public static esp32WifiConnection reset_wifi_conn_tab(esp32WifiConnection currentWifiConnection, Text ip_addr_field, Text subnet_mask_field){
 
-        System.out.println("Resetting the Wi-Fi Connection Tab");
+        logger.info("Resetting the Wi-Fi Connection Tab");
 
         // We re-initialise the instance of the class (and all its variables)
         currentWifiConnection = new esp32WifiConnection();
@@ -50,7 +52,7 @@ public class Reset {
 
     public static gpsCaller reset_esp_gps_tab(gpsCaller currentGpsCaller, AnchorPane section_AnchorPane){
 
-        System.out.println("Resetting the ESP32 GPS Tab");
+        logger.info("Resetting the ESP32 GPS Tab");
 
         // We re-initialise the instance of the class (and all its variables)
         currentGpsCaller = new gpsCaller();
@@ -64,7 +66,7 @@ public class Reset {
     public static pingHost reset_ping_tab(pingHost currentPingHostObj,
                                           Text host_ip_text, Text ttl_text, Text seq_num_text, Text time_text){
 
-        System.out.println("Resetting the Ping Host Tab");
+        logger.info("Resetting the Ping Host Tab");
 
         host_ip_text.setText(SceneDefaultValues.default_host_ip_result_text);
         ttl_text.setText(SceneDefaultValues.default_ping_ttl_text);
@@ -78,7 +80,7 @@ public class Reset {
 
     public static void reset_geoapify_section(AnchorPane section_AnchorPane){
 
-        System.out.println("Resetting the GPS Geoapify Section");
+        logger.info("Resetting the GPS Geoapify Section");
 
         // We re-initialise the contents of the AnchorPane related to the result of the API call parsing
         section_AnchorPane.getChildren().clear();

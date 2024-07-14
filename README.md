@@ -51,3 +51,8 @@ used for this project. But ultimately, those software packages ended up as part 
 I could have made a Build container based on a Windows Docker Image (to provide a controlled build env so that I can run
 my Maven builds), but ultimately decided against it because Windows has behaviour which makes it harder
 to work with Docker.
+
+## Logging
+
+This app automatically stores a log file in (C:\wifi_data_acquisition_companion_app).
+This file is overwritten every time the user opens the application again.

@@ -3,6 +3,8 @@ package distanceCalcs;
 
 import Constants.Constants;
 
+import static Gui.Main.logger;
+
 /**
  * This function calculates the Free Space Path Loss (FSPL)
  Refer to: https://www.electronics-notes.com/articles/antennas-propagation/propagation-overview/free-space-path-loss.php
@@ -69,7 +71,7 @@ public class distanceCalculator {
         remaining_formula = transmit_power - attenuation - rssi - 20*Math.log10(frequency) - 32.44;
         distance = Math.pow(10, remaining_formula/20);
 
-        System.out.println("Calculated Distance (km): " + distance);
+        logger.info("Calculated Distance (km): " + distance);
         return distance;
     }
 

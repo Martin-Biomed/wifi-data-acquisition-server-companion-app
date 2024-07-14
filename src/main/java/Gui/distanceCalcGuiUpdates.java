@@ -18,6 +18,8 @@ import customExceptions.customException;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import static Gui.Main.logger;
+
 public class distanceCalcGuiUpdates {
 
     private static double latest_low_att_distance;
@@ -81,9 +83,9 @@ public class distanceCalcGuiUpdates {
             String value;
             if (json_ap.has(Constants.device_type_key)) {
                 value = json_ap.get(Constants.device_type_key).toString();
-                System.out.println("Retrieved the Device Type for AP " + (ap_num + 1) + ": " + value);
+               logger.info("Retrieved the Device Type for AP " + (ap_num + 1) + ": " + value);
             } else {
-                System.out.println("AP " + (ap_num + 1) + " was not explicitly configured with a Device Type, assuming Regular Router.");
+                logger.info("AP " + (ap_num + 1) + " was not explicitly configured with a Device Type, assuming Regular Router.");
                 value = Constants.regular_ap_router_str;
             }
 
@@ -95,7 +97,7 @@ public class distanceCalcGuiUpdates {
             }
         }
         catch (Exception e){
-            System.out.println("Exception while extracting Device Type for AP " + (ap_num + 1) + ": " + e.getMessage());
+            logger.error("Exception while extracting Device Type for AP " + (ap_num + 1) + ": " + e.getMessage());
             throw new customException("Exception while extracting Device Type for AP " + (ap_num + 1) + ": " + e.getMessage());
         }
     }
@@ -117,10 +119,10 @@ public class distanceCalcGuiUpdates {
 
         if (json_ap.has("Received Signal Strength Indicator (RSSI)")){
             value = Integer.parseInt(json_ap.get("Received Signal Strength Indicator (RSSI)").toString());
-            System.out.println("Retrieved the RSSI for AP " + (ap_num+1) + ": " + value);
+            logger.info("Retrieved the RSSI for AP " + (ap_num+1) + ": " + value);
         }
         else {
-            System.out.println("AP " + ap_num + " does not have a value for RSSI");
+            logger.error("AP " + ap_num + " does not have a value for RSSI");
             throw new customException("AP " + (ap_num+1) + " does not have a value for RSSI");
         }
         return value;
@@ -143,7 +145,7 @@ public class distanceCalcGuiUpdates {
 
         if (json_ap.has("Channel")){
             value = Integer.parseInt(json_ap.get("Channel").toString());
-            System.out.println("Retrieved the Wi-Fi 2.4GHz Channel for AP " + (ap_num+1) + ": " + value);
+            logger.info("Retrieved the Wi-Fi 2.4GHz Channel for AP " + (ap_num+1) + ": " + value);
         }
         else {
             System.out.println("AP " + ap_num + " does not have a value for Channel");

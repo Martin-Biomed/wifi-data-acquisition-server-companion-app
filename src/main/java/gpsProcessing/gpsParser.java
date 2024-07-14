@@ -3,6 +3,8 @@ package gpsProcessing;
 import java.text.DecimalFormat;
 import java.util.Objects;
 
+import static Gui.Main.logger;
+
 /** This Class is intended to be used to parse the raw JSON key-value pairs received from the ESP32 when we request
  * a GPS position (No internet required, just successful BLE GATT messaging to the ESP32).
  *
@@ -27,11 +29,11 @@ public class gpsParser {
             String remainder = input_str.substring(6);
 
             String final_utc_time = hours + ":" + minutes + ":" + seconds + remainder;
-            System.out.println("Parsed the following time from GPRMC msg: " + final_utc_time);
+            logger.info("Parsed the following time from GPRMC msg: " + final_utc_time);
             return final_utc_time;
         }
         else {
-            System.out.println("UTC Time contains unexpected number of Digits");
+            logger.info("UTC Time contains unexpected number of Digits");
             return "UTC Time contains unexpected number of Digits";
         }
     }
@@ -66,11 +68,12 @@ public class gpsParser {
         String[] split_coordinates = raw_coordinates.split("\\.");
 
         String angle = split_coordinates[0].substring(0, split_coordinates[0].length()-2);
-        System.out.println("Parsed the following angle from provided coordinates: " + angle);
+        logger.info("Parsed the following angle from provided coordinates: " + angle);
 
         String minutes =
                 split_coordinates[0].substring(split_coordinates[0].length()-2) + "." + split_coordinates[1];
-        System.out.println("Remainder of the Coordinate String: " + minutes);
+
+        logger.info("Remainder of the Coordinate String: " + minutes);
 
         final_coordinates = angle + " deg " + minutes + " " + direction;
 
@@ -90,11 +93,11 @@ public class gpsParser {
         String[] split_coordinates = raw_coordinates.split("\\.");
 
         String angle = split_coordinates[0].substring(0, split_coordinates[0].length()-2);
-        System.out.println("Parsed the following angle from provided coordinates: " + angle);
+        logger.info("Parsed the following angle from provided coordinates: " + angle);
 
         String minutes =
                 split_coordinates[0].substring(split_coordinates[0].length()-2) + "." + split_coordinates[1];
-        System.out.println("Remainder of the Coordinate String: " + minutes);
+        logger.info("Remainder of the Coordinate String: " + minutes);
 
         // The formula for extracting Absolute Map Coordinates is:
         // Decimal Degrees = Angle + (Minutes/60) [Sign dictated by direction]
@@ -113,7 +116,7 @@ public class gpsParser {
             direction_sign = 1;
         }
         else {
-            System.out.println("Error parsing the direction value of the GPRMC coordinates");
+            logger.error("Error parsing the direction value of the GPRMC coordinates");
             direction_sign = 0;
         }
 
@@ -139,7 +142,7 @@ public class gpsParser {
             String year = input_str.substring(4);
 
             String final_date = day+ "-" + month + "-" + year;
-            System.out.println("Parsed the following date from GPRMC msg: " + final_date);
+            logger.info("Parsed the following date from GPRMC msg: " + final_date);
             return final_date;
         }
         else {
