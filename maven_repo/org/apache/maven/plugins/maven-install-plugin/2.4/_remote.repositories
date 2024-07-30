@@ -1,4 +1,5 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Sat May 25 23:34:01 ACST 2024
+#Tue Jul 30 20:32:17 ACST 2024
 maven-install-plugin-2.4.jar>central=
 maven-install-plugin-2.4.pom>central=
+maven-install-plugin-2.4-sources.jar>central=

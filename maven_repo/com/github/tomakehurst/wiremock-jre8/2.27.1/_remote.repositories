@@ -1,4 +1,5 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Sat May 25 23:34:01 ACST 2024
+#Tue Jul 30 20:32:11 ACST 2024
 wiremock-jre8-2.27.1.jar>central=
 wiremock-jre8-2.27.1.pom>central=
+wiremock-jre8-2.27.1-sources.jar>central=

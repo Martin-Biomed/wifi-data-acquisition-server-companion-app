@@ -1,4 +1,5 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Sun Jul 14 14:56:05 ACST 2024
+#Tue Jul 30 20:32:27 ACST 2024
 snakeyaml-1.24.jar>central=
+snakeyaml-1.24-sources.jar>central=
 snakeyaml-1.24.pom>central=

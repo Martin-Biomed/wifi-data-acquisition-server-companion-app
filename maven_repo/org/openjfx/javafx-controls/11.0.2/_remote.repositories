@@ -1,5 +1,6 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Mon May 27 22:52:21 ACST 2024
-javafx-controls-11.0.2.pom>central=
+#Tue Jul 30 20:32:20 ACST 2024
 javafx-controls-11.0.2.jar>central=
+javafx-controls-11.0.2.pom>central=
 javafx-controls-11.0.2-win.jar>central=
+javafx-controls-11.0.2-sources.jar>central=

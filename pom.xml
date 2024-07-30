@@ -12,6 +12,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <executable.jar.descriptor>jar-with-dependencies</executable.jar.descriptor>
         <javafx.mainClass>Gui.Main</javafx.mainClass>
         <project.numeric.version>1.0</project.numeric.version>
         <project.year>2024</project.year>
@@ -49,8 +50,22 @@
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.19.0</version>
+            <version>2.21.1</version>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.21.1</version>
+        </dependency>
+
+        <!--
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.17.1</version>
+        </dependency>
+        -->
 
         <!-- Needed to allow Log4J2 to read YAML config files -->
         <dependency>
@@ -58,6 +73,7 @@
             <artifactId>jackson-dataformat-yaml</artifactId>
             <version>2.10.0</version>
         </dependency>
+
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -117,20 +133,31 @@
                 </configuration>
             </plugin>
 
+            <!-- Build a standalone executable JAR -->
             <plugin>
-                <!-- Build an executable JAR -->
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
+                <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.1.0</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>${javafx.mainClass}</mainClass>
-                        </manifest>
-                    </archive>
-                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <mainClass>
+                                        ${javafx.mainClass}
+                                    </mainClass>
+                                </manifest>
+                            </archive>
+                            <descriptorRefs>
+                                <descriptorRef>${executable.jar.descriptor}</descriptorRef>
+                            </descriptorRefs>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -152,6 +179,7 @@
             </plugin>
 
 
+
             <!-- To create an (EXE) File from the JAR -->
             <!-- See for more details: https://stackoverflow.com/questions/30298273/need-help-configuring-maven-pom-to-build-exe-file -->
             <plugin>
@@ -168,7 +196,7 @@
                         <configuration>
                             <headerType>gui</headerType>
                             <outfile>target/${project.artifactId}.exe</outfile>
-                            <jar>target/${project.artifactId}-${project.version}.jar</jar>
+                            <jar>target/${project.artifactId}-${project.version}-${executable.jar.descriptor}.jar</jar>
                             <dontWrapJar>false</dontWrapJar>
                             <errTitle>Error in launch4j plugin</errTitle>
                             <classPath>
@@ -178,6 +206,9 @@
                                 <minVersion>${maven.compiler.source}.0</minVersion>
                                 <initialHeapSize>512</initialHeapSize>
                                 <maxHeapSize>1024</maxHeapSize>
+                                <opts>
+                                    <opt>-Dlog4j.configurationFile=target/classes/log4j2.yaml</opt>
+                                </opts>
                             </jre>
                             <versionInfo>
                                 <fileVersion>${project.numeric.version}.0.0</fileVersion>
@@ -198,7 +229,6 @@
                     </execution>
                 </executions>
             </plugin>
-
 
         </plugins>
     </build>

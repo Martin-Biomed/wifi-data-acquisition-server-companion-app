@@ -1,5 +1,6 @@
 #NOTE: This is a Maven Resolver internal implementation file, its format can be changed without prior notice.
-#Mon May 27 22:52:21 ACST 2024
+#Tue Jul 30 20:32:14 ACST 2024
 javafx-graphics-11.0.2-win.jar>central=
+javafx-graphics-11.0.2-sources.jar>central=
 javafx-graphics-11.0.2.jar>central=
 javafx-graphics-11.0.2.pom>central=
